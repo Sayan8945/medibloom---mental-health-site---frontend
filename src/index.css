@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Root background — prevents white flash/strip on mobile ── */
+html, body, #root {
+  background-color: #0e1122;
+  min-height: 100%;
+}
+
+/* ── Base typography ── */
+body {
+  font-family: "DM Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+/* ── Scrollbar ─────────────────────────────────── */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #06a055 transparent;
+}
+.scroll-thin::-webkit-scrollbar { width: 4px; }
+.scroll-thin::-webkit-scrollbar-thumb {
+  background-color: #06a055;
+  border-radius: 99px;
+}
+.scroll-thin::-webkit-scrollbar-track { background: transparent; }
+
+/* ── React Tabs ─────────────────────────────────── */
+.react-tabs { -webkit-tap-highlight-color: transparent; }
+
+.react-tabs__tab-list {
+  border-bottom: 2px solid #e5e7eb;
+  margin: 0 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.react-tabs__tab {
+  background: transparent;
+  display: inline-block;
+  position: relative;
+  list-style: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 8px 8px 0 0;
+  color: #6b7280;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: color 150ms ease, background-color 150ms ease;
+  border: none !important;
+  outline: none;
+  bottom: -2px;
+}
+
+.react-tabs__tab:hover { color: #06a055; background: #f0fdf4; }
+
+.react-tabs__tab--selected {
+  background: #fff;
+  border-bottom: 2px solid #06a055 !important;
+  color: #06a055 !important;
+  outline: none;
+}
+
+.react-tabs__tab-panel { display: none; }
+.react-tabs__tab-panel--selected { display: block; }
+
+/* ── Active nav link ────────────────────────────── */
+.isActive { color: #06a055 !important; }
+
+/* ── Reduced motion ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

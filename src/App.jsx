@@ -1,0 +1,44 @@
+import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from './contexts/AuthContext';
+import HomePage          from './pages/HomePage';
+import Login             from './pages/Login';
+import SurveyPage        from './pages/SurveyPage';
+import SurveyHistoryPage from './pages/SurveyHistoryPage';
+import Layout            from './componenets/Layout';
+import ProtectedRoute    from './componenets/ProtectedRoute';
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index         element={<HomePage />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/survey"
+              element={
+                <ProtectedRoute>
+                  <SurveyPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/history"
+              element={
+                <ProtectedRoute>
+                  <SurveyHistoryPage />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+        </Routes>
+      </Router>
+      <Toaster position="top-right" />
+    </AuthProvider>
+  );
+}
+
+export default App;
