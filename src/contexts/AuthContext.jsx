@@ -1,19 +1,30 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import toast from 'react-hot-toast';
 import api from '../utils/api';
 
 const AuthContext = createContext(null);
 
+const toastStyle = {
+  borderRadius: '14px',
+  background: '#0e1122',
+  color: '#fff',
+  border: '1px solid rgba(255,255,255,0.1)',
+  fontSize: '14px',
+  padding: '12px 16px',
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser]       = useState(null);
-  const [loading, setLoading] = useState(true); // true while checking session on mount
+  const [loading, setLoading] = useState(true);
 
-  // Restore session from cookie on every page load
   const checkAuth = useCallback(async () => {
     try {
       const res = await api.get('/auth/me');
       setUser(res.data.authenticated ? res.data.user : null);
+      return res.data.authenticated ? res.data.user : null;
     } catch {
       setUser(null);
+      return null;
     } finally {
       setLoading(false);
     }
@@ -23,15 +34,31 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, [checkAuth]);
 
-  // Handle ?auth=success redirect back from Google OAuth
+  // Handle ?auth=success / ?auth=failed redirect back from Google OAuth
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+
     if (params.get('auth') === 'success') {
       window.history.replaceState({}, '', window.location.pathname);
-      checkAuth();
+      checkAuth().then((loggedInUser) => {
+        if (loggedInUser) {
+          const firstName = loggedInUser.fullName?.split(' ')[0] || 'there';
+          toast.success(`Welcome back, ${firstName}! 👋`, {
+            style: toastStyle,
+            iconTheme: { primary: '#06a055', secondary: '#fff' },
+            duration: 4000,
+          });
+        }
+      });
     }
+
     if (params.get('auth') === 'failed') {
       window.history.replaceState({}, '', window.location.pathname);
+      toast.error('Sign in was cancelled or failed. Please try again.', {
+        style: toastStyle,
+        iconTheme: { primary: '#f43f5e', secondary: '#fff' },
+        duration: 4000,
+      });
     }
   }, [checkAuth]);
 
