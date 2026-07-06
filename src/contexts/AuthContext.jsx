@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
           toast.success(`Welcome back, ${firstName}! 👋`, {
             style: toastStyle,
             iconTheme: { primary: '#06a055', secondary: '#fff' },
-            duration: 4000,
+            duration: 3000,
           });
         }
       });
@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
       toast.error('Sign in was cancelled or failed. Please try again.', {
         style: toastStyle,
         iconTheme: { primary: '#f43f5e', secondary: '#fff' },
-        duration: 4000,
+        duration: 3000,
       });
     }
   }, [checkAuth]);
