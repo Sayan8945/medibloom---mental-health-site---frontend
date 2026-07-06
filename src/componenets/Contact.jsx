@@ -52,10 +52,10 @@ const Contact = () => {
 
     try {
       await emailjs.send(
-        'service_3vt23el',
-        'template_k9xsgld',
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
         templateParams,
-        'Iib2SGv8Ws7nKhjeq'
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
       );
       setForm({ name: '', email: '', phone: '', address: '', message: '' });
       setShowModal(true);

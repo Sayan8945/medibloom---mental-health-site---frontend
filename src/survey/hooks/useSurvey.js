@@ -113,18 +113,21 @@ export function useSurvey() {
       submittedAt: new Date().toISOString(),
       ...answers,
     };
+    let savedToServer = false;
     try {
-      await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/survey`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/survey`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+      if (res.ok) savedToServer = true;
     } catch (_) {
-      // Backend optional at this stage — continue to results
+      // Network unavailable — continue to results anyway
     }
     localStorage.removeItem(STORAGE_KEY);
     setSubmitted(true);
+    return { savedToServer };
   }, [answers]);
 
   const progress = Math.round((step / (TOTAL_STEPS - 1)) * 100);
