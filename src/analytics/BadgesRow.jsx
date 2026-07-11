@@ -1,9 +1,13 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   MdStar, MdLocalFireDepartment, MdMilitaryTech,
   MdNightlight, MdEnergySavingsLeaf, MdEmojiEvents, MdLocalFlorist,
-  MdLock,
+  MdLock, MdExpandMore, MdExpandLess,
 } from 'react-icons/md';
+
+// On mobile, collapse the grid to this many badges with a "Show more" toggle
+const MOBILE_COLLAPSED_COUNT = 2;
 
 const ICONS = {
   star:   MdStar,
@@ -26,9 +30,11 @@ const COLORS = {
 };
 
 const BadgesRow = ({ badges }) => {
+  const [expanded, setExpanded] = useState(false);
   if (!badges || badges.length === 0) return null;
 
   const earnedCount = badges.filter((b) => b.earned).length;
+  const hasHidden = badges.length > MOBILE_COLLAPSED_COUNT;
 
   return (
     <div className="space-y-3">
@@ -42,21 +48,26 @@ const BadgesRow = ({ badges }) => {
         </span>
       </div>
 
-      {/* Wrapping grid — no horizontal scroll, adapts to available width */}
+      {/* Wrapping grid — no horizontal scroll, adapts to available width.
+          On mobile (< sm) only the first MOBILE_COLLAPSED_COUNT badges show
+          unless expanded; sm+ always shows the full grid. */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
         {badges.map((badge, i) => {
           const Icon = ICONS[badge.icon] || MdStar;
           const c = COLORS[badge.icon] || COLORS.star;
           const locked = !badge.earned;
+          const hiddenOnMobile = !expanded && i >= MOBILE_COLLAPSED_COUNT;
 
           return (
             <motion.div
               key={badge.id}
               initial={{ opacity: 0, scale: 0.85 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ type: 'spring', stiffness: 260, damping: 18, delay: i * 0.05 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 18, delay: Math.min(i, MOBILE_COLLAPSED_COUNT) * 0.05 }}
               whileHover={{ y: -3, scale: locked ? 1 : 1.03 }}
               className={`relative bg-white dark:bg-darkCard rounded-2xl border shadow-sm p-4 text-center ${
+                hiddenOnMobile ? 'hidden sm:block' : ''
+              } ${
                 locked
                   ? 'border-gray-100 dark:border-white/10 opacity-60'
                   : 'border-gray-100 dark:border-white/10'
@@ -81,6 +92,20 @@ const BadgesRow = ({ badges }) => {
           );
         })}
       </div>
+
+      {/* Show more/less — mobile only, sm+ already sees the full grid */}
+      {hasHidden && (
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          className="sm:hidden w-full flex items-center justify-center gap-1.5 text-xs font-semibold text-primary bg-primary/5 hover:bg-primary/10 border border-primary/20 rounded-xl py-2.5 transition-colors"
+        >
+          {expanded ? (
+            <>Show less <MdExpandLess className="w-4 h-4" /></>
+          ) : (
+            <>Show {badges.length - MOBILE_COLLAPSED_COUNT} more <MdExpandMore className="w-4 h-4" /></>
+          )}
+        </button>
+      )}
     </div>
   );
 };
