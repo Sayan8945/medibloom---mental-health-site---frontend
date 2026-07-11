@@ -25,9 +25,20 @@ const Navbar = () => {
 
   const handleTogglePersonalizedAI = async () => {
     if (savingAiPref || !user) return;
+    const nextValue = !(user.settings?.personalizedAI !== false);
     setSavingAiPref(true);
     try {
-      await updatePersonalizedAI(!(user.settings?.personalizedAI !== false));
+      await updatePersonalizedAI(nextValue);
+      toast.success(
+        nextValue
+          ? 'Personalized AI enabled — the chatbot can use your wellness history.'
+          : 'Personalized AI disabled — the chatbot will give generic responses.',
+        {
+          icon: nextValue ? '✨' : '🔒',
+          style: { borderRadius: '12px', background: '#0e1122', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' },
+          duration: 3000,
+        }
+      );
     } catch {
       toast.error('Could not update your preference. Please try again.');
     } finally {
