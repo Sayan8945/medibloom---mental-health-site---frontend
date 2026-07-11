@@ -7,6 +7,7 @@ import { IoLogOutOutline } from 'react-icons/io5';
 import { MdHistory, MdInsights, MdAutoAwesome } from 'react-icons/md';
 import { useAuth } from '../contexts/AuthContext';
 import LoginModal from './LoginModal';
+import PersonalizedAIModal from './PersonalizedAIModal';
 import toast from 'react-hot-toast';
 import './Navbar.css';
 
@@ -22,6 +23,7 @@ const NAV_LINKS = [
 const Navbar = () => {
   const { user, logout, updatePersonalizedAI } = useAuth();
   const [savingAiPref, setSavingAiPref] = useState(false);
+  const [aiPrefModal, setAiPrefModal] = useState({ show: false, enabled: true });
 
   const handleTogglePersonalizedAI = async () => {
     if (savingAiPref || !user) return;
@@ -29,16 +31,7 @@ const Navbar = () => {
     setSavingAiPref(true);
     try {
       await updatePersonalizedAI(nextValue);
-      toast.success(
-        nextValue
-          ? 'Personalized AI enabled — the chatbot can use your wellness history.'
-          : 'Personalized AI disabled — the chatbot will give generic responses.',
-        {
-          icon: nextValue ? '✨' : '🔒',
-          style: { borderRadius: '12px', background: '#0e1122', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' },
-          duration: 3000,
-        }
-      );
+      setAiPrefModal({ show: true, enabled: nextValue });
     } catch {
       toast.error('Could not update your preference. Please try again.');
     } finally {
@@ -446,6 +439,13 @@ const Navbar = () => {
 
       {/* Login Modal — rendered outside header to avoid stacking context issues */}
       <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
+
+      {/* Personalized AI preference confirmation */}
+      <PersonalizedAIModal
+        isOpen={aiPrefModal.show}
+        enabled={aiPrefModal.enabled}
+        onClose={() => setAiPrefModal((prev) => ({ ...prev, show: false }))}
+      />
     </>
   );
 };
