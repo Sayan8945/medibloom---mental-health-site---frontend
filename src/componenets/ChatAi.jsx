@@ -117,7 +117,7 @@ const ChatAi = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.95 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed z-40 bottom-40 right-2 sm:right-9 w-[calc(100vw-16px)] max-w-xs md:max-w-md overflow-hidden bg-white dark:bg-darkCard rounded-2xl shadow-2xl flex flex-col border border-black/5"
+            className="fixed z-40 bottom-40 right-2 sm:right-9 w-[calc(100vw-16px)] max-w-xs md:max-w-md max-h-[min(32rem,calc(100vh-15rem))] overflow-hidden bg-white dark:bg-darkCard rounded-2xl shadow-2xl flex flex-col border border-black/5"
           >
             {/* Header */}
             <div className="relative bg-gradient-to-br from-primary via-primary to-[#048a48] px-4 md:px-6 py-3.5 md:py-4 overflow-hidden">
@@ -178,7 +178,7 @@ const ChatAi = () => {
             {/* Body */}
             <div
               ref={chatBodyRef}
-              className="overflow-y-auto scroll-thin flex flex-col gap-4 md:gap-5 h-64 sm:h-72 md:h-80 max-h-[60vh] px-4 md:px-6 py-4 md:py-5 bg-gray-50 dark:bg-darkBg"
+              className="overflow-y-auto scroll-thin flex flex-col gap-4 md:gap-5 flex-1 min-h-[12rem] sm:min-h-[16rem] px-4 md:px-6 py-4 md:py-5 bg-gray-50 dark:bg-darkBg"
             >
               {/* Personalized default greeting */}
               <motion.div
