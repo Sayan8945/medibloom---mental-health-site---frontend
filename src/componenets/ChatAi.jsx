@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import './ChatAi.css';
 import ChatForm from './ChatForm';
 import ChatMessage from './ChatMessage';
+import api from '../utils/api';
+import { useAuth } from '../contexts/AuthContext';
+import { MdAutoAwesome } from 'react-icons/md';
 
 const BotIcon = ({ className = '' }) => (
   <svg
@@ -16,10 +19,21 @@ const BotIcon = ({ className = '' }) => (
 );
 
 const ChatAi = () => {
+  const { user } = useAuth();
   const [chatHistory, setChatHistory] = useState([]);
   const [showChatbot, setShowChatbot] = useState(false);
+  // Best-guess before the first reply arrives; the backend confirms the
+  // real value (context may still be unavailable for brand-new users).
+  const [personalized, setPersonalized] = useState(false);
   const chatBodyRef = useRef();
 
+  useEffect(() => {
+    setPersonalized(user?.settings?.personalizedAI !== false && !!user);
+  }, [user]);
+
+  // The backend builds a context-aware system prompt from the user's own
+  // wellness history (subject to their privacy setting) and calls Gemini
+  // server-side — the API key never touches the browser.
   const generateBotResponse = async (history) => {
     const updateHistory = (text) => {
       setChatHistory((prev) => [
@@ -28,25 +42,10 @@ const ChatAi = () => {
       ]);
     };
 
-    const formattedHistory = history.map(({ role, text }) => ({
-      role,
-      parts: [{ text }],
-    }));
-
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: formattedHistory }),
-    };
-
     try {
-      const response = await fetch(import.meta.env.VITE_API_URL, requestOptions);
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error?.message || 'Something went wrong');
-      const apiResponseText = data.candidates[0].content.parts[0].text
-        .replace(/\*\*(.*?)\*\*/g, '$1')
-        .trim();
-      updateHistory(apiResponseText);
+      const res = await api.post('/chat', { history });
+      updateHistory(res.data.reply);
+      setPersonalized(!!res.data.personalized);
     } catch (error) {
       updateHistory(error.message);
     }
@@ -119,21 +118,35 @@ const ChatAi = () => {
             className="fixed z-40 bottom-40 right-2 sm:right-9 w-[calc(100vw-16px)] max-w-xs md:max-w-md overflow-hidden bg-white rounded-2xl shadow-2xl"
           >
             {/* Header */}
-            <div className="bg-primary flex items-center justify-between px-4 md:px-6 py-3 md:py-4">
-              <div className="flex items-center gap-3">
-                <BotIcon className="h-9 w-9 p-1.5 flex-shrink-0 fill-white bg-white/20 rounded-full" />
-                <div>
-                  <h2 className="text-white text-sm font-semibold leading-none">MediBloom AI</h2>
-                  <p className="text-white/70 text-xs mt-0.5">Mental wellness assistant</p>
+            <div className="bg-primary px-4 md:px-6 py-3 md:py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <BotIcon className="h-9 w-9 p-1.5 flex-shrink-0 fill-white bg-white/20 rounded-full" />
+                  <div>
+                    <h2 className="text-white text-sm font-semibold leading-none">MediBloom AI</h2>
+                    <p className="text-white/70 text-xs mt-0.5">Mental wellness assistant</p>
+                  </div>
                 </div>
+                <button
+                  onClick={() => setShowChatbot(false)}
+                  aria-label="Close chatbot"
+                  className="material-symbols-rounded h-9 w-9 text-white cursor-pointer text-xl rounded-full transition bg-white/20 hover:bg-white/30 flex items-center justify-center"
+                >
+                  keyboard_arrow_down
+                </button>
               </div>
-              <button
-                onClick={() => setShowChatbot(false)}
-                aria-label="Close chatbot"
-                className="material-symbols-rounded h-9 w-9 text-white cursor-pointer text-xl rounded-full transition bg-white/20 hover:bg-white/30 flex items-center justify-center"
-              >
-                keyboard_arrow_down
-              </button>
+
+              {/* Personalization indicator */}
+              {user && (
+                <div className="flex items-center gap-1.5 mt-2.5">
+                  <MdAutoAwesome className="w-3 h-3 text-white/70 flex-shrink-0" />
+                  <span className="text-white/70 text-[11px] font-medium leading-none">
+                    {personalized
+                      ? 'Personalized using your wellness history'
+                      : 'Generic AI responses enabled'}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Body */}

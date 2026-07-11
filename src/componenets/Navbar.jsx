@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { HiMenuAlt3, HiX } from 'react-icons/hi';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaGoogle } from 'react-icons/fa';
 import { IoLogOutOutline } from 'react-icons/io5';
-import { MdHistory } from 'react-icons/md';
+import { MdHistory, MdInsights, MdAutoAwesome } from 'react-icons/md';
 import { useAuth } from '../contexts/AuthContext';
 import LoginModal from './LoginModal';
 import toast from 'react-hot-toast';
@@ -20,8 +20,23 @@ const NAV_LINKS = [
 ];
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updatePersonalizedAI } = useAuth();
+  const [savingAiPref, setSavingAiPref] = useState(false);
+
+  const handleTogglePersonalizedAI = async () => {
+    if (savingAiPref || !user) return;
+    setSavingAiPref(true);
+    try {
+      await updatePersonalizedAI(!(user.settings?.personalizedAI !== false));
+    } catch {
+      toast.error('Could not update your preference. Please try again.');
+    } finally {
+      setSavingAiPref(false);
+    }
+  };
   const navigate = useNavigate();
+  const location = useLocation();
+  const isHome = location.pathname === '/';
   const [isOpen,       setIsOpen]       = useState(false);
   const [activeSection,setActiveSection]= useState('home');
   const [scrolled,     setScrolled]     = useState(false);
@@ -40,9 +55,15 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
+  // Clear the active-link highlight when we leave the homepage
+  useEffect(() => {
+    if (!isHome) setActiveSection('');
+  }, [isHome]);
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
+      if (!isHome) return;
       const scrollPosition = window.scrollY + 100;
       NAV_LINKS.forEach(({ id }) => {
         const el = document.getElementById(id);
@@ -54,19 +75,27 @@ const Navbar = () => {
         }
       });
     };
+    handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isHome]);
 
   const scrollTo = (id) => {
     const el = document.getElementById(id);
     if (el) window.scrollTo({ top: el.offsetTop, behavior: 'smooth' });
   };
 
+  // Nav links point to homepage sections. When we're already on the homepage
+  // this just scrolls; from any other page (survey, analytics, history) it
+  // navigates back to "/" first and scrolls once the page has mounted.
   const handleNavClick = (e, id) => {
     e.preventDefault();
     setIsOpen(false);
-    scrollTo(id);
+    if (isHome) {
+      scrollTo(id);
+    } else {
+      navigate('/', { state: { scrollTo: id } });
+    }
   };
 
   const handleLogout = async () => {
@@ -179,12 +208,44 @@ const Navbar = () => {
                       {/* Menu items */}
                       <div className="py-2">
                         <button
+                          onClick={() => { setShowDropdown(false); navigate('/analytics'); }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/8 transition-colors text-left"
+                        >
+                          <MdInsights className="w-4 h-4 flex-shrink-0" />
+                          Wellness Journey
+                        </button>
+                        <button
                           onClick={() => { setShowDropdown(false); navigate('/history'); }}
                           className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/8 transition-colors text-left"
                         >
                           <MdHistory className="w-4 h-4 flex-shrink-0" />
                           Survey History
                         </button>
+
+                        {/* Personalized AI privacy toggle */}
+                        <div className="flex items-center justify-between gap-3 px-4 py-2.5">
+                          <span className="flex items-center gap-3 text-sm text-white/70">
+                            <MdAutoAwesome className="w-4 h-4 flex-shrink-0" />
+                            Personalized AI
+                          </span>
+                          <button
+                            onClick={handleTogglePersonalizedAI}
+                            disabled={savingAiPref}
+                            role="switch"
+                            aria-checked={user.settings?.personalizedAI !== false}
+                            aria-label="Toggle personalized AI chatbot responses"
+                            className={`relative w-9 h-5 rounded-full transition-colors flex-shrink-0 disabled:opacity-60 ${
+                              user.settings?.personalizedAI !== false ? 'bg-primary' : 'bg-white/20'
+                            }`}
+                          >
+                            <span
+                              className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${
+                                user.settings?.personalizedAI !== false ? 'translate-x-4' : 'translate-x-0'
+                              }`}
+                            />
+                          </button>
+                        </div>
+
                         <div className="border-t border-white/10 mt-1 pt-1">
                           <button
                             onClick={handleLogout}
@@ -291,6 +352,15 @@ const Navbar = () => {
                         </div>
                       </div>
 
+                      {/* Wellness Journey */}
+                      <button
+                        onClick={() => { setIsOpen(false); navigate('/analytics'); }}
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/10 transition-colors rounded-lg mx-1"
+                      >
+                        <MdInsights className="w-4 h-4 flex-shrink-0" />
+                        Wellness Journey
+                      </button>
+
                       {/* Survey History */}
                       <button
                         onClick={() => { setIsOpen(false); navigate('/history'); }}
@@ -299,6 +369,30 @@ const Navbar = () => {
                         <MdHistory className="w-4 h-4 flex-shrink-0" />
                         Survey History
                       </button>
+
+                      {/* Personalized AI privacy toggle */}
+                      <div className="flex items-center justify-between gap-3 px-4 py-3 mx-1">
+                        <span className="flex items-center gap-3 text-sm text-white/70">
+                          <MdAutoAwesome className="w-4 h-4 flex-shrink-0" />
+                          Personalized AI
+                        </span>
+                        <button
+                          onClick={handleTogglePersonalizedAI}
+                          disabled={savingAiPref}
+                          role="switch"
+                          aria-checked={user.settings?.personalizedAI !== false}
+                          aria-label="Toggle personalized AI chatbot responses"
+                          className={`relative w-9 h-5 rounded-full transition-colors flex-shrink-0 disabled:opacity-60 ${
+                            user.settings?.personalizedAI !== false ? 'bg-primary' : 'bg-white/20'
+                          }`}
+                        >
+                          <span
+                            className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${
+                              user.settings?.personalizedAI !== false ? 'translate-x-4' : 'translate-x-0'
+                            }`}
+                          />
+                        </button>
+                      </div>
 
                       {/* Log out */}
                       <button

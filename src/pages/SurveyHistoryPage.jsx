@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../utils/api';
-import { MdHistory, MdAutoAwesome, MdRefresh } from 'react-icons/md';
-import { IoArrowBack, IoShieldCheckmark, IoChevronDown, IoChevronUp } from 'react-icons/io5';
+import { MdHistory } from 'react-icons/md';
+import { IoArrowBack, IoShieldCheckmark, IoChevronDown, IoChevronUp, IoSparkles } from 'react-icons/io5';
 import { FaArrowRight } from 'react-icons/fa';
 
 // ── Scoring (same logic as StepResults) ───────────────────────
@@ -209,6 +209,59 @@ const SubmissionCard = ({ response, index }) => {
   );
 };
 
+// ── Animated "New Assessment" button ────────────────────────────
+// Gradient sheen sweep + pulsing glow ring + icon micro-interactions.
+// `compact` renders a smaller pill for the header; default is the full CTA.
+const NewAssessmentButton = ({ onClick, compact = false }) => (
+  <motion.button
+    onClick={onClick}
+    whileHover={{ scale: 1.035 }}
+    whileTap={{ scale: 0.97 }}
+    className={`group relative inline-flex items-center gap-2.5 overflow-hidden rounded-2xl font-semibold text-white transition-shadow duration-300 ${
+      compact ? 'px-4 py-2.5 text-xs' : 'px-8 py-4 text-sm'
+    }`}
+    style={{ background: 'linear-gradient(135deg, #06a055 0%, #0dbf68 45%, #06a055 100%)' }}
+  >
+    {/* Soft pulsing glow behind the button — draws the eye without being loud */}
+    <motion.span
+      aria-hidden
+      className="absolute inset-0 rounded-2xl bg-primary/60 -z-10"
+      animate={{ scale: [1, 1.12, 1], opacity: [0.5, 0, 0.5] }}
+      transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+    />
+
+    {/* Diagonal sheen that sweeps across on hover */}
+    <motion.span
+      aria-hidden
+      className="absolute inset-y-0 -left-1/2 w-1/2 bg-gradient-to-r from-transparent via-white/35 to-transparent skew-x-[-20deg]"
+      initial={{ x: '-20%' }}
+      animate={{ x: '260%' }}
+      transition={{ duration: 1.6, repeat: Infinity, repeatDelay: 1.2, ease: 'easeInOut' }}
+    />
+
+    {/* Sparkle icon — gentle continuous rotation + a little "twinkle" scale */}
+    <motion.span
+      className="relative z-10 flex items-center justify-center"
+      animate={{ rotate: [0, 15, 0, -15, 0] }}
+      transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+    >
+      <IoSparkles className={compact ? 'w-3.5 h-3.5' : 'w-4.5 h-4.5'} />
+    </motion.span>
+
+    <span className="relative z-10">New Assessment</span>
+
+    {/* Arrow slides out on hover */}
+    <motion.span
+      className="relative z-10 flex items-center justify-center"
+      initial={{ x: 0 }}
+      whileHover={{ x: 3 }}
+      transition={{ duration: 0.2 }}
+    >
+      <FaArrowRight className={compact ? 'w-3 h-3' : 'w-3.5 h-3.5'} />
+    </motion.span>
+  </motion.button>
+);
+
 // ── Empty state ────────────────────────────────────────────────
 const EmptyState = ({ onTake }) => (
   <motion.div
@@ -271,18 +324,25 @@ const SurveyHistoryPage = () => {
             Back to Home
           </button>
 
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <MdHistory className="w-5 h-5 text-primary" />
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <MdHistory className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-title font-bold text-heroBg leading-none">
+                  Survey History
+                </h1>
+                <p className="text-gray-500 text-sm mt-0.5">
+                  {user?.fullName} · {responses.length} assessment{responses.length !== 1 ? 's' : ''}
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-title font-bold text-heroBg leading-none">
-                Survey History
-              </h1>
-              <p className="text-gray-500 text-sm mt-0.5">
-                {user?.fullName} · {responses.length} assessment{responses.length !== 1 ? 's' : ''}
-              </p>
-            </div>
+
+            {/* Header CTA — only once there's history to show alongside */}
+            {responses.length > 0 && (
+              <NewAssessmentButton compact onClick={() => navigate('/survey')} />
+            )}
           </div>
         </motion.div>
 
@@ -316,18 +376,12 @@ const SurveyHistoryPage = () => {
 
             {/* Take another CTA */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: responses.length * 0.07 + 0.2 }}
-              className="flex justify-center pt-4"
+              className="flex justify-center pt-6"
             >
-              <button
-                onClick={() => navigate('/survey')}
-                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 text-sm font-medium transition-colors"
-              >
-                <MdAutoAwesome className="w-4 h-4" />
-                Take a new assessment
-              </button>
+              <NewAssessmentButton onClick={() => navigate('/survey')} />
             </motion.div>
           </div>
         )}

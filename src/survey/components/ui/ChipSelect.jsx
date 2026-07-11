@@ -22,7 +22,7 @@ const ChipSelect = ({ options, selected = [], onChange, max }) => {
             className={`px-4 py-2 rounded-full text-sm font-medium border transition-all duration-150 focus-visible:ring-2 focus-visible:ring-primary focus:outline-none ${
               active
                 ? 'bg-primary border-primary text-white'
-                : 'bg-white border-gray-200 text-gray-600 hover:border-primary/50 hover:text-primary'
+                : 'bg-white dark:bg-white/5 border-gray-200 dark:border-white/15 text-gray-600 dark:text-gray-300 hover:border-primary/50 hover:text-primary'
             }`}
           >
             {opt}

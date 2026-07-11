@@ -5,12 +5,12 @@ const StepShell = ({ title, subtitle, onSubmit, onBack, children, submitLabel = 
   <form onSubmit={onSubmit} noValidate className="space-y-6">
     {/* Header */}
     <div className="space-y-1 pb-2">
-      <h2 className="text-2xl font-title font-bold text-heroBg">{title}</h2>
-      {subtitle && <p className="text-gray-500 text-sm leading-relaxed">{subtitle}</p>}
+      <h2 className="text-2xl font-title font-bold text-heroBg dark:text-white">{title}</h2>
+      {subtitle && <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">{subtitle}</p>}
     </div>
 
     {/* Card */}
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 space-y-6">
+    <div className="bg-white dark:bg-darkCard rounded-2xl border border-gray-100 dark:border-white/10 shadow-sm p-6 sm:p-8 space-y-6">
       {children}
     </div>
 
@@ -19,7 +19,7 @@ const StepShell = ({ title, subtitle, onSubmit, onBack, children, submitLabel = 
       <button
         type="button"
         onClick={onBack}
-        className="text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none px-3 py-2 rounded-lg"
+        className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white font-medium transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none px-3 py-2 rounded-lg"
       >
         ← Back
       </button>

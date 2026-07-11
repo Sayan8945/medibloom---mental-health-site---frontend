@@ -2,15 +2,18 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import HomePage          from './pages/HomePage';
 import Login             from './pages/Login';
 import SurveyPage        from './pages/SurveyPage';
 import SurveyHistoryPage from './pages/SurveyHistoryPage';
+import AnalyticsPage     from './pages/AnalyticsPage';
 import Layout            from './componenets/Layout';
 import ProtectedRoute    from './componenets/ProtectedRoute';
 
 function App() {
   return (
+    <ThemeProvider>
     <AuthProvider>
       <Router>
         <Routes>
@@ -33,11 +36,20 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/analytics"
+              element={
+                <ProtectedRoute>
+                  <AnalyticsPage />
+                </ProtectedRoute>
+              }
+            />
           </Route>
         </Routes>
       </Router>
       <Toaster position="top-right" />
     </AuthProvider>
+    </ThemeProvider>
   );
 }
 

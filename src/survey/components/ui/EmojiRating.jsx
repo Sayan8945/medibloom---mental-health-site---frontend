@@ -21,11 +21,11 @@ const EmojiRating = ({ value, onChange, name }) => (
           className={`flex flex-col items-center gap-1 px-3 py-2 rounded-xl border transition-all duration-150 focus-visible:ring-2 focus-visible:ring-primary focus:outline-none min-w-[56px] ${
             active
               ? 'border-primary bg-primary/10 scale-110'
-              : 'border-gray-200 bg-white hover:border-primary/40'
+              : 'border-gray-200 dark:border-white/15 bg-white dark:bg-white/5 hover:border-primary/40'
           }`}
         >
           <span className="text-2xl leading-none">{item.emoji}</span>
-          <span className={`text-xs font-medium ${active ? 'text-primary' : 'text-gray-500'}`}>
+          <span className={`text-xs font-medium ${active ? 'text-primary' : 'text-gray-500 dark:text-gray-400'}`}>
             {item.label}
           </span>
         </button>

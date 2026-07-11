@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -19,7 +20,9 @@ export default {
       colors: {
         'heroBg' :  "#0e1122",
         'para':"rgb(0 0 0 / 80%)",
-        'primary': '#06a055'
+        'primary': '#06a055',
+        'darkCard': '#1a1f35',   // survey/analytics card bg in dark mode
+        'darkBg':   '#0b0e1a',   // survey/analytics page bg in dark mode
       }
     },
   },

@@ -69,12 +69,21 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   }, []);
 
+  // Update the "personalized AI" privacy preference (chatbot uses wellness
+  // history to tailor its replies). Persists to the backend, then patches
+  // local state so the UI reflects it immediately.
+  const updatePersonalizedAI = useCallback(async (enabled) => {
+    const res = await api.patch('/auth/settings', { personalizedAI: enabled });
+    setUser((prev) => (prev ? { ...prev, settings: res.data.settings } : prev));
+    return res.data.settings;
+  }, []);
+
   const loginWithGoogle = () => {
     window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/google`;
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, checkAuth, logout, loginWithGoogle }}>
+    <AuthContext.Provider value={{ user, loading, checkAuth, logout, loginWithGoogle, updatePersonalizedAI }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import api from '../utils/api';
 import { useSurvey } from '../survey/hooks/useSurvey';
 import SurveyLayout from '../survey/components/SurveyLayout';
 import StepWelcome    from '../survey/components/StepWelcome';
@@ -70,6 +71,28 @@ const SurveyPage = () => {
   const [isAnalyzing, setIsAnalyzing]   = useState(false);
   const [showResults, setShowResults]   = useState(submitted);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [prefilled, setPrefilled]       = useState(false);
+
+  // Prefill Basic Information from the user's most recent submission so
+  // returning users don't re-enter age/occupation etc. Only runs on a
+  // fresh start (age still empty) — never overrides resumed progress.
+  useEffect(() => {
+    if (answers.basicInfo?.age) return; // already filled (resumed or prefilled)
+
+    let cancelled = false;
+    api.get('/survey/history')
+      .then((res) => {
+        if (cancelled) return;
+        const last = res.data.responses?.[0];
+        const info = last?.basicInfo;
+        if (info && Object.keys(info).length && info.age) {
+          updateAnswers('basicInfo', info);
+          setPrefilled(true);
+        }
+      })
+      .catch(() => {}); // silent — first-time users have no history
+    return () => { cancelled = true; };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Each step handler saves its section and advances
   const advance = (section, data) => {
@@ -77,10 +100,24 @@ const SurveyPage = () => {
     goNext();
   };
 
+  const [previousResponse, setPreviousResponse] = useState(null);
+
   const handleSubmit = async (consentData) => {
     setIsSubmitting(true);
     updateAnswers('consent', consentData.consent);
     await submit();
+
+    // Fetch the previous assessment (index 1 = the one before this submission)
+    // so the results screen can show a comparison.
+    try {
+      const res = await api.get('/survey/history');
+      const list = res.data.responses || [];
+      // list[0] is the just-submitted one; list[1] is the previous
+      setPreviousResponse(list.length >= 2 ? list[1] : null);
+    } catch (_) {
+      setPreviousResponse(null);
+    }
+
     setIsSubmitting(false);
     setIsAnalyzing(true);
     setTimeout(() => {
@@ -96,7 +133,7 @@ const SurveyPage = () => {
   if (showResults) {
     return (
       <SurveyLayout step={12} progress={100} onBack={() => {}}>
-        <StepResults answers={answers} onReset={reset} />
+        <StepResults answers={answers} previousResponse={previousResponse} onReset={reset} />
       </SurveyLayout>
     );
   }
@@ -109,6 +146,7 @@ const SurveyPage = () => {
         return (
           <StepBasicInfo
             data={answers.basicInfo}
+            prefilled={prefilled}
             onNext={(d) => advance('basicInfo', d)}
             onBack={goBack}
           />
