@@ -1,37 +1,50 @@
-import {useRef} from 'react'
+import { useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { IoSend } from 'react-icons/io5';
 
-
-const ChatForm = ({chatHistory, setChatHistory, generateBotResponse}) => {
+// Controlled-ish send box — parent owns the conversation state, this just
+// captures a message and hands it off via onSend. Disabled while the bot
+// is "typing" so users can't fire off a second message mid-reply.
+const ChatForm = ({ onSend, disabled, autoFocus }) => {
   const inputRef = useRef();
+
+  useEffect(() => {
+    if (autoFocus) inputRef.current?.focus();
+  }, [autoFocus]);
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    const userMessage = inputRef.current.value.trim();
-    if (!userMessage) return;
-    inputRef.current.value = "";
+    const message = inputRef.current.value.trim();
+    if (!message || disabled) return;
+    inputRef.current.value = '';
+    onSend(message);
+  };
 
-    // update chat history with user's massage
-    setChatHistory((history) => [...history, {role: "user", text: userMessage}]);
-    // add placeholder for Bot's
-    setTimeout(() => {setChatHistory((history) => [...history, {role: "model", text: " . . . . ."}]);
-     generateBotResponse([...chatHistory, {role: "user", text: userMessage}]);},600);
-
-   
-  }
   return (
-    <form className="chat-form flex items-center bg-white rounded-full outline outline-1 outline-[#cccce5] shadow-md focus-within:outline-2 focus-within:outline-[#06a055]"
-    onSubmit={handleFormSubmit}>
-          <input
-            type="text"
-            placeholder="Message..."
-            required
-            ref={inputRef}
-            className="message-input peer w-full h-10 md:h-12 px-3 md:px-4 text-sm bg-transparent border-none outline-none"
-          />
-          <button className="material-symbols-rounded hidden h-8 w-8 md:h-9 text-white text-base flex-shrink-0 mr-1.5 rounded-full bg-[#06a055] transition hover:bg-[#023e21] peer-valid:block">
-            keyboard_arrow_up
-          </button>
+    <form
+      className="chat-form flex items-center gap-1.5 bg-gray-50 dark:bg-white/5 rounded-full outline outline-1 outline-gray-200 dark:outline-white/10 shadow-sm focus-within:outline-2 focus-within:outline-primary transition-shadow"
+      onSubmit={handleFormSubmit}
+    >
+      <input
+        type="text"
+        placeholder={disabled ? 'MediBloom AI is typing…' : 'Type your message…'}
+        required
+        ref={inputRef}
+        disabled={disabled}
+        className="message-input peer w-full h-10 md:h-12 px-4 text-sm bg-transparent border-none outline-none placeholder:text-gray-400 dark:text-gray-100 disabled:cursor-not-allowed"
+      />
+      <motion.button
+        type="submit"
+        disabled={disabled}
+        whileHover={{ scale: disabled ? 1 : 1.08 }}
+        whileTap={{ scale: disabled ? 1 : 0.9 }}
+        aria-label="Send message"
+        className="flex-shrink-0 flex items-center justify-center h-9 w-9 md:h-10 md:w-10 mr-1 rounded-full bg-primary text-white shadow-sm shadow-primary/30 transition-colors hover:bg-primary/90 disabled:opacity-40 disabled:pointer-events-none"
+      >
+        <IoSend className="w-4 h-4" />
+      </motion.button>
     </form>
-  )
-}
+  );
+};
 
-export default ChatForm
+export default ChatForm;

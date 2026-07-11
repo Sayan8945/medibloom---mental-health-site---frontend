@@ -1,21 +1,52 @@
-import React from 'react'
+import { motion } from 'framer-motion';
+import { IoPersonCircle } from 'react-icons/io5';
+import BotIcon from './BotIcon';
 
-const ChatMessage = ({chat}) => {
-    const botStyles = ["flex gap-2 md:gap-3", "message-text px-3 py-2 md:px-4 md:py-3 max-w-[75%] break-words whitespace-pre-line text-sm bg-[#f6f2ff] rounded-t-xl rounded-bl-md"];
-    const userStyles = ["flex flex-col items-end", "massage-chat px-3 py-2 md:px-4 md:py-3 max-w-[75%] break-words whitespace-pre-line text-sm text-white bg-primary rounded-t-xl rounded-br-md"];
-    let styles=[];
-    {chat.role === 'model' ? styles=botStyles : styles=userStyles}
+// Animated "typing" dots — shown instead of text while the bot is thinking
+const TypingDots = () => (
+  <span className="flex items-center gap-1 py-1">
+    {[0, 1, 2].map((i) => (
+      <motion.span
+        key={i}
+        className="w-1.5 h-1.5 rounded-full bg-gray-400 dark:bg-gray-300"
+        animate={{ y: [0, -4, 0], opacity: [0.4, 1, 0.4] }}
+        transition={{ duration: 0.9, repeat: Infinity, ease: 'easeInOut', delay: i * 0.15 }}
+      />
+    ))}
+  </span>
+);
+
+const ChatMessage = ({ chat, userAvatar, isTyping = false }) => {
+  const isBot = chat.role === 'model';
+
   return (
-    <div className={styles[0]}>
-          {chat.role === "model" && 
-            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 1024 1024" className="h-8 w-8 md:h-9 md:w-9 p-1 flex-shrink-0 fill-white self-end mb-0.5 bg-primary rounded-full"><path d="M738.3 287.6H285.7c-59 0-106.8 47.8-106.8 106.8v303.1c0 59 47.8 106.8 106.8 106.8h81.5v111.1c0 .7.8 1.1 1.4.7l166.9-110.6 41.8-.8h117.4l43.6-.4c59 0 106.8-47.8 106.8-106.8V394.5c0-59-47.8-106.9-106.8-106.9zM351.7 448.2c0-29.5 23.9-53.5 53.5-53.5s53.5 23.9 53.5 53.5-23.9 53.5-53.5 53.5-53.5-23.9-53.5-53.5zm157.9 267.1c-67.8 0-123.8-47.5-132.3-109h264.6c-8.6 61.5-64.5 109-132.3 109zm110-213.7c-29.5 0-53.5-23.9-53.5-53.5s23.9-53.5 53.5-53.5 53.5 23.9 53.5 53.5-23.9 53.5-53.5 53.5zM867.2 644.5V453.1h26.5c19.4 0 35.1 15.7 35.1 35.1v121.1c0 19.4-15.7 35.1-35.1 35.1h-26.5zM95.2 609.4V488.2c0-19.4 15.7-35.1 35.1-35.1h26.5v191.3h-26.5c-19.4 0-35.1-15.7-35.1-35.1zM561.5 149.6c0 23.4-15.6 43.3-36.9 49.7v44.9h-30v-44.9c-21.4-6.5-36.9-26.3-36.9-49.7 0-28.6 23.3-51.9 51.9-51.9s51.9 23.3 51.9 51.9z" />
-            </svg>
-          }
-          <p className={styles[1]}>
-            {chat.text}
-          </p>
-    </div>
-  )
-}
+    <motion.div
+      initial={{ opacity: 0, y: 10, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+      className={isBot ? 'flex gap-2 md:gap-3' : 'flex gap-2 md:gap-3 justify-end'}
+    >
+      {isBot && (
+        <BotIcon className="h-8 w-8 md:h-9 md:w-9 p-1.5 flex-shrink-0 fill-white self-end mb-0.5 bg-primary rounded-full" />
+      )}
 
-export default ChatMessage
+      <div
+        className={
+          isBot
+            ? 'px-3.5 py-2.5 md:px-4 md:py-3 max-w-[78%] break-words whitespace-pre-line text-sm leading-relaxed bg-white dark:bg-white/10 text-gray-700 dark:text-gray-100 rounded-t-xl rounded-bl-md shadow-sm'
+            : 'px-3.5 py-2.5 md:px-4 md:py-3 max-w-[78%] break-words whitespace-pre-line text-sm leading-relaxed text-white bg-primary rounded-t-xl rounded-br-md shadow-sm shadow-primary/20'
+        }
+      >
+        {isTyping ? <TypingDots /> : chat.text}
+      </div>
+
+      {!isBot && (
+        userAvatar
+          ? <img src={userAvatar} alt="" referrerPolicy="no-referrer" className="h-8 w-8 md:h-9 md:w-9 flex-shrink-0 self-end mb-0.5 rounded-full object-cover" />
+          : <IoPersonCircle className="h-8 w-8 md:h-9 md:w-9 flex-shrink-0 self-end mb-0.5 text-gray-300 dark:text-gray-500" />
+      )}
+    </motion.div>
+  );
+};
+
+export default ChatMessage;
