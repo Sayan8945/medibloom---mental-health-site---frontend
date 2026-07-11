@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaGoogle } from 'react-icons/fa';
 import { IoLogOutOutline } from 'react-icons/io5';
-import { MdHistory, MdInsights, MdAutoAwesome } from 'react-icons/md';
+import { MdHistory, MdInsights, MdAutoAwesome, MdLightbulbOutline } from 'react-icons/md';
 import { useAuth } from '../contexts/AuthContext';
 import LoginModal from './LoginModal';
 import PersonalizedAIModal from './PersonalizedAIModal';
@@ -219,6 +219,13 @@ const Navbar = () => {
                           Wellness Journey
                         </button>
                         <button
+                          onClick={() => { setShowDropdown(false); navigate('/recommendations'); }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/8 transition-colors text-left"
+                        >
+                          <MdLightbulbOutline className="w-4 h-4 flex-shrink-0" />
+                          Recommendations
+                        </button>
+                        <button
                           onClick={() => { setShowDropdown(false); navigate('/history'); }}
                           className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/8 transition-colors text-left"
                         >
@@ -363,6 +370,15 @@ const Navbar = () => {
                       >
                         <MdInsights className="w-4 h-4 flex-shrink-0" />
                         Wellness Journey
+                      </button>
+
+                      {/* Recommendations */}
+                      <button
+                        onClick={() => { setIsOpen(false); navigate('/recommendations'); }}
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/10 transition-colors rounded-lg mx-1"
+                      >
+                        <MdLightbulbOutline className="w-4 h-4 flex-shrink-0" />
+                        Recommendations
                       </button>
 
                       {/* Survey History */}
