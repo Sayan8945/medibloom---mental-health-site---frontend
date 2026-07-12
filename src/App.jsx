@@ -9,6 +9,7 @@ import SurveyPage        from './pages/SurveyPage';
 import SurveyHistoryPage from './pages/SurveyHistoryPage';
 import AnalyticsPage     from './pages/AnalyticsPage';
 import RecommendationsPage from './pages/RecommendationsPage';
+import MoodPage          from './pages/MoodPage';
 import Layout            from './componenets/Layout';
 import ProtectedRoute    from './componenets/ProtectedRoute';
 
@@ -50,6 +51,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <RecommendationsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/mood"
+              element={
+                <ProtectedRoute>
+                  <MoodPage />
                 </ProtectedRoute>
               }
             />

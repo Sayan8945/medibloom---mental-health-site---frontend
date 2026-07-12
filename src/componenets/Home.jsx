@@ -3,6 +3,8 @@ import { FaCircleArrowRight } from 'react-icons/fa6';
 import { MdAutoAwesome } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 import ImageSlider from './ImageSlider';
+import DesktopSidebar from '../components/WellnessSidebar/DesktopSidebar';
+import { useWellnessSidebar } from '../components/WellnessSidebar/WellnessSidebarContext';
 
 // ── Animation variants ─────────────────────────────────────────
 const fadeUp = (delay = 0) => ({
@@ -50,7 +52,17 @@ const StatPill = ({ value, label, delay }) => (
 );
 
 // ── Main component ─────────────────────────────────────────────
-const Home = () => (
+// Desktop layout (lg+, signed-in users): Left Content 35% / Hero
+// Illustration 40% / Wellness Sidebar 25%, via flex-basis percentages on a
+// 3-item flex row. Signed-out users keep the original 50/50 two-column
+// layout. Below `lg`, the sidebar renders in its own Tablet/Mobile layouts
+// elsewhere on the page (see HomePage.jsx), so the hero itself falls back
+// to the original 2-col stack.
+const Home = () => {
+  const sidebar = useWellnessSidebar();
+  const { user } = sidebar;
+
+  return (
   <section
     id="home"
     className="relative bg-heroBg text-white flex items-center pt-20 sm:pt-24 min-h-screen overflow-hidden"
@@ -70,10 +82,18 @@ const Home = () => (
       }}
     />
 
-    <div className="relative max-w-7xl mx-auto w-full flex flex-col md:flex-row items-center justify-between px-4 sm:px-8 lg:px-16 py-10 md:py-14 gap-10 md:gap-14">
+    <div
+      className={`relative max-w-[90rem] mx-auto w-full flex flex-col md:flex-row items-center justify-between px-4 sm:px-8 lg:px-12 py-10 md:py-14 gap-10 md:gap-10 ${
+        user ? 'lg:items-start' : ''
+      }`}
+    >
 
-      {/* ── LEFT COLUMN ── */}
-      <div className="w-full md:w-1/2 flex flex-col items-center md:items-start gap-5 md:gap-7">
+      {/* ── LEFT COLUMN — 35% on desktop when the sidebar is present ── */}
+      <div
+        className={`w-full md:w-1/2 flex flex-col items-center md:items-start gap-5 md:gap-7 ${
+          user ? 'lg:basis-[35%] lg:w-auto lg:shrink-0' : ''
+        }`}
+      >
 
         {/* Badge */}
         <motion.div
@@ -200,18 +220,33 @@ const Home = () => (
         </motion.div>
       </div>
 
-      {/* ── RIGHT COLUMN — Image Slider ── */}
+      {/* ── MIDDLE COLUMN — Hero Illustration — 40% on desktop when the
+          sidebar is present, otherwise the original 50/50 split ── */}
       <motion.div
         initial={{ opacity: 0, x: 32, scale: 0.97 }}
         animate={{ opacity: 1, x: 0,  scale: 1 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.25 }}
-        className="w-full md:w-1/2 flex justify-center"
+        className={`w-full md:w-1/2 flex justify-center ${
+          user ? 'lg:basis-[40%] lg:w-auto lg:shrink-0' : ''
+        }`}
       >
         <ImageSlider />
       </motion.div>
 
+      {/* ── RIGHT COLUMN — Wellness Sidebar — 25% on desktop, signed-in
+          users only. Sticky (top = navbar height + 20px), never fixed, so
+          it scrolls away naturally past the hero section. Rendered only
+          at lg+ here; the Tablet/Mobile variants live in HomePage.jsx
+          below the hero so there's exactly one mood widget per layout. ── */}
+      {user && (
+        <div className="hidden lg:block lg:basis-[25%] lg:shrink-0 self-stretch">
+          <DesktopSidebar {...sidebar} />
+        </div>
+      )}
+
     </div>
   </section>
-);
+  );
+};
 
 export default Home;
