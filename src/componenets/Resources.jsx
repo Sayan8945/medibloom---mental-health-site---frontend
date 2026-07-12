@@ -58,7 +58,7 @@ const VideoCard = ({ video, onPlay }) => (
       <img
         src={video.thumbnail}
         alt={video.title}
-        className="w-full h-28 sm:h-48 object-cover"
+        className="w-full h-44 sm:h-56 object-cover"
         loading="lazy"
       />
       <button

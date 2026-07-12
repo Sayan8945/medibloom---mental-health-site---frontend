@@ -19,7 +19,7 @@ const ImageSlider = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-[190px] sm:h-[400px] md:h-[480px] lg:h-[540px] overflow-hidden rounded-xl sm:rounded-2xl shadow-2xl shadow-black/40">
+    <div className="relative w-full h-[260px] sm:h-[400px] md:h-[480px] lg:h-[540px] overflow-hidden rounded-xl sm:rounded-2xl shadow-2xl shadow-black/40">
       <AnimatePresence mode="wait">
         <motion.img
           key={currentIndex}
