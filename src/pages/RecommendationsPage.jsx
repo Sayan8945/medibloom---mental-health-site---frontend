@@ -56,14 +56,18 @@ const RecommendationsPage = () => {
   const [error, setError]                 = useState('');
   const [recommendations, setRecommendations] = useState([]);
   const [personalized, setPersonalized]   = useState(false);
+  const [generatedAt, setGeneratedAt]     = useState(null);
 
-  const loadData = useCallback(async (isRefresh = false) => {
-    isRefresh ? setRefreshing(true) : setLoading(true);
+  const loadData = useCallback(async (forceRefresh = false) => {
+    forceRefresh ? setRefreshing(true) : setLoading(true);
     setError('');
     try {
-      const res = await api.get('/recommendations');
+      const res = await api.get('/recommendations', {
+        params: forceRefresh ? { refresh: true } : undefined,
+      });
       setRecommendations(res.data.recommendations || []);
       setPersonalized(!!res.data.personalized);
+      setGeneratedAt(res.data.generatedAt || null);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -72,7 +76,7 @@ const RecommendationsPage = () => {
     }
   }, []);
 
-  useEffect(() => { loadData(); }, [loadData]);
+  useEffect(() => { loadData(false); }, [loadData]);
 
   const hasData = recommendations.length > 0;
   const isFirstTimeUser = !personalized && recommendations.some((r) => r.id === 'generic-assessment');
@@ -112,6 +116,11 @@ const RecommendationsPage = () => {
                   {personalized
                     ? `Personalized for ${user?.fullName?.split(' ')[0] || 'you'} based on your check-ins`
                     : 'General wellness suggestions to get you started'}
+                  {personalized && generatedAt && (
+                    <span className="text-gray-400 dark:text-gray-500">
+                      {' · '}Generated {new Date(generatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                    </span>
+                  )}
                 </p>
               </div>
             </div>
