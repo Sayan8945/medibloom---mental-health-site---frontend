@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import {
   MdPerson, MdHistory, MdOutlineMood, MdMenuBook,
+  MdSettings, MdHelpOutline,
 } from 'react-icons/md';
 import { IoChevronForward, IoLogOutOutline, IoCalendarOutline } from 'react-icons/io5';
 
@@ -9,9 +10,6 @@ import { IoChevronForward, IoLogOutOutline, IoCalendarOutline } from 'react-icon
  * (no new routes introduced). Items without a real destination yet
  * (Appointments, Journal Entries) are marked "Soon" and are inert, so we
  * never claim functionality the app doesn't have.
- *
- * Settings and Help & Support now live in the navbar's user dropdown
- * instead of here (Personalized AI stays available in both places).
  */
 const LINKS = [
   { id: 'profile',       icon: MdPerson,          label: 'My Profile',         action: 'profile' },
@@ -19,6 +17,8 @@ const LINKS = [
   { id: 'appointments',  icon: IoCalendarOutline, label: 'Appointments',       action: 'contact' },
   { id: 'mood-history',  icon: MdOutlineMood,     label: 'Mood History',       to: '/mood' },
   { id: 'journal',       icon: MdMenuBook,        label: 'Journal Entries',    disabled: true },
+  { id: 'settings',      icon: MdSettings,        label: 'Settings',           action: 'settings' },
+  { id: 'help',          icon: MdHelpOutline,     label: 'Help & Support',     action: 'contact' },
 ];
 
 const LinkItem = ({ item, index, onNavigate, onAction }) => {
@@ -68,8 +68,8 @@ const LinkItem = ({ item, index, onNavigate, onAction }) => {
 
 /**
  * @param {(path: string) => void} onNavigate - react-router navigate
- * @param {(action: 'profile'|'contact') => void} onAction - opens a modal
- *   or scrolls to a homepage section instead of routing
+ * @param {(action: 'profile'|'settings'|'contact') => void} onAction - opens
+ *   a modal or scrolls to a homepage section instead of routing
  * @param {() => void} onLogout
  */
 const ProfileQuickLinks = ({ onNavigate, onAction, onLogout }) => (

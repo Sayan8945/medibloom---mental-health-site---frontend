@@ -4,10 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FaGoogle } from 'react-icons/fa';
 import { IoLogOutOutline } from 'react-icons/io5';
-import { MdSettings, MdHelpOutline, MdAutoAwesome } from 'react-icons/md';
 import { useAuth } from '../contexts/AuthContext';
 import LoginModal from './LoginModal';
-import SettingsModal from './SettingsModal';
 import toast from 'react-hot-toast';
 import './Navbar.css';
 
@@ -21,7 +19,7 @@ const NAV_LINKS = [
 ];
 
 const Navbar = () => {
-  const { user, logout, updatePersonalizedAI } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === '/';
@@ -30,8 +28,6 @@ const Navbar = () => {
   const [scrolled,     setScrolled]     = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLogin,    setShowLogin]    = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [savingAiPref, setSavingAiPref] = useState(false);
   const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -95,35 +91,6 @@ const Navbar = () => {
       icon: '👋',
       style: { borderRadius: '12px', background: '#0e1122', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' },
     });
-  };
-
-  const handleOpenSettings = () => {
-    setShowDropdown(false);
-    setIsOpen(false);
-    setShowSettings(true);
-  };
-
-  // Help & Support scrolls to the same #contact section the wellness hub's
-  // quick links use — no new page/route introduced.
-  const handleHelp = (e) => {
-    setShowDropdown(false);
-    handleNavClick(e, 'contact');
-  };
-
-  // Personalized AI toggle — also available inside SettingsModal.jsx;
-  // kept here too per spec so it's reachable directly from the navbar.
-  const handleTogglePersonalizedAI = async () => {
-    if (savingAiPref || !user) return;
-    const nextValue = !(user.settings?.personalizedAI !== false);
-    setSavingAiPref(true);
-    try {
-      await updatePersonalizedAI(nextValue);
-      toast.success(nextValue ? 'Personalized AI enabled' : 'Personalized AI disabled');
-    } catch {
-      toast.error('Could not update your preference. Please try again.');
-    } finally {
-      setSavingAiPref(false);
-    }
   };
 
   return (
@@ -224,58 +191,16 @@ const Navbar = () => {
                         </div>
                       </div>
 
-                      {/* Settings, Help & Support, and the Personalized AI
-                          toggle — the rest of the profile links live in
-                          the wellness hub's Quick Navigation section */}
+                      {/* Only action: Log Out — all other profile links now
+                          live in the wellness sidebar's Quick Links section */}
                       <div className="py-2">
                         <button
-                          onClick={handleOpenSettings}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/8 transition-colors text-left"
+                          onClick={handleLogout}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors text-left"
                         >
-                          <MdSettings className="w-4 h-4 flex-shrink-0" />
-                          Settings
+                          <IoLogOutOutline className="w-4 h-4 flex-shrink-0" />
+                          Log Out
                         </button>
-                        <button
-                          onClick={handleHelp}
-                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/8 transition-colors text-left"
-                        >
-                          <MdHelpOutline className="w-4 h-4 flex-shrink-0" />
-                          Help & Support
-                        </button>
-
-                        {/* Personalized AI privacy toggle */}
-                        <div className="flex items-center justify-between gap-3 px-4 py-2.5">
-                          <span className="flex items-center gap-3 text-sm text-white/70">
-                            <MdAutoAwesome className="w-4 h-4 flex-shrink-0" />
-                            Personalized AI
-                          </span>
-                          <button
-                            onClick={handleTogglePersonalizedAI}
-                            disabled={savingAiPref}
-                            role="switch"
-                            aria-checked={user.settings?.personalizedAI !== false}
-                            aria-label="Toggle personalized AI chatbot responses"
-                            className={`relative w-9 h-5 rounded-full transition-colors flex-shrink-0 disabled:opacity-60 ${
-                              user.settings?.personalizedAI !== false ? 'bg-primary' : 'bg-white/20'
-                            }`}
-                          >
-                            <span
-                              className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${
-                                user.settings?.personalizedAI !== false ? 'translate-x-4' : 'translate-x-0'
-                              }`}
-                            />
-                          </button>
-                        </div>
-
-                        <div className="border-t border-white/10 mt-1 pt-1">
-                          <button
-                            onClick={handleLogout}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors text-left"
-                          >
-                            <IoLogOutOutline className="w-4 h-4 flex-shrink-0" />
-                            Log Out
-                          </button>
-                        </div>
                       </div>
                     </motion.div>
                   )}
@@ -373,49 +298,9 @@ const Navbar = () => {
                         </div>
                       </div>
 
-                      {/* Settings */}
-                      <button
-                        onClick={handleOpenSettings}
-                        className="flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/10 transition-colors rounded-lg mx-1"
-                      >
-                        <MdSettings className="w-4 h-4 flex-shrink-0" />
-                        Settings
-                      </button>
-
-                      {/* Help & Support */}
-                      <button
-                        onClick={handleHelp}
-                        className="flex items-center gap-3 px-4 py-3 text-sm text-white/70 hover:text-white hover:bg-white/10 transition-colors rounded-lg mx-1"
-                      >
-                        <MdHelpOutline className="w-4 h-4 flex-shrink-0" />
-                        Help & Support
-                      </button>
-
-                      {/* Personalized AI privacy toggle */}
-                      <div className="flex items-center justify-between gap-3 px-4 py-3 mx-1">
-                        <span className="flex items-center gap-3 text-sm text-white/70">
-                          <MdAutoAwesome className="w-4 h-4 flex-shrink-0" />
-                          Personalized AI
-                        </span>
-                        <button
-                          onClick={handleTogglePersonalizedAI}
-                          disabled={savingAiPref}
-                          role="switch"
-                          aria-checked={user.settings?.personalizedAI !== false}
-                          aria-label="Toggle personalized AI chatbot responses"
-                          className={`relative w-9 h-5 rounded-full transition-colors flex-shrink-0 disabled:opacity-60 ${
-                            user.settings?.personalizedAI !== false ? 'bg-primary' : 'bg-white/20'
-                          }`}
-                        >
-                          <span
-                            className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform ${
-                              user.settings?.personalizedAI !== false ? 'translate-x-4' : 'translate-x-0'
-                            }`}
-                          />
-                        </button>
-                      </div>
-
-                      {/* Log out */}
+                      {/* Log out — the only action here; all other profile
+                          links now live in the wellness sidebar / mobile
+                          profile drawer's Quick Links section */}
                       <button
                         onClick={handleLogout}
                         className="flex items-center gap-3 px-4 py-3 text-sm text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors rounded-lg mx-1"
@@ -454,9 +339,8 @@ const Navbar = () => {
         </AnimatePresence>
       </header>
 
-      {/* Login / Settings modals — rendered outside header to avoid stacking context issues */}
+      {/* Login Modal — rendered outside header to avoid stacking context issues */}
       <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
-      <SettingsModal isOpen={showSettings} onClose={() => setShowSettings(false)} />
     </>
   );
 };

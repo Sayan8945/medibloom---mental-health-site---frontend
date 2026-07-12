@@ -1,5 +1,6 @@
 import MoodCheckInModal from '../../mood/MoodCheckInModal';
 import ProfileInfoModal from './ProfileInfoModal';
+import SettingsModal from '../../componenets/SettingsModal';
 import HubTrigger from './HubTrigger';
 import HubPanel from './HubPanel';
 import HubSheet from './HubSheet';
@@ -16,10 +17,6 @@ import { WellnessHubProvider, useWellnessHub } from './WellnessHubContext';
  * Reuses existing APIs only (GET/POST/PUT /api/mood/*, GET /api/analytics/*)
  * and the existing AuthContext — no new endpoints, no business logic
  * changes, no protected-route/session handling beyond what already exists.
- *
- * Settings now lives in the navbar's user dropdown (see Navbar.jsx) rather
- * than as a hub quick-link — that shared <SettingsModal/> instance covers
- * both entry points.
  */
 const WellnessHubContent = () => {
   const hub = useWellnessHub();
@@ -54,6 +51,11 @@ const WellnessHubContent = () => {
             isOpen={hub.profileOpen}
             onClose={() => hub.setProfileOpen(false)}
             user={hub.user}
+          />
+
+          <SettingsModal
+            isOpen={hub.settingsOpen}
+            onClose={() => hub.setSettingsOpen(false)}
           />
 
           <MoodReminderModal

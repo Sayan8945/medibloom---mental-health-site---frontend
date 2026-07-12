@@ -24,7 +24,7 @@ const STEPS = [
 const WorkingSteps = () => (
   <section
     id="about"
-    className="relative bg-cover bg-center py-24 bg-working-img overflow-hidden"
+    className="relative bg-cover bg-center py-10 sm:py-24 bg-working-img overflow-hidden"
   >
     {/* Overlay */}
     <div className="absolute inset-0 bg-heroBg" style={{ opacity: 0.93 }} aria-hidden="true" />
@@ -35,16 +35,16 @@ const WorkingSteps = () => (
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
-        className="text-white text-center mb-16"
+        className="text-white text-center mb-6 sm:mb-16"
       >
-        <h2 className="text-4xl font-bold font-title mb-4">How We Work</h2>
-        <p className="text-white/70 text-lg md:w-1/2 w-full mx-auto leading-relaxed">
+        <h2 className="text-2xl sm:text-4xl font-bold font-title mb-2 sm:mb-4">How We Work</h2>
+        <p className="text-white/70 text-sm sm:text-lg md:w-1/2 w-full mx-auto leading-relaxed">
           At MediBloom, we make mental wellness simple, private, and accessible for every student.
           Here's how it works:
         </p>
       </motion.div>
 
-      <div className="flex flex-col md:flex-row gap-8 md:w-4/5 mx-auto">
+      <div className="flex flex-col md:flex-row gap-5 sm:gap-8 md:w-4/5 mx-auto">
         {STEPS.map((step, i) => (
           <motion.div
             key={step.number}
@@ -53,13 +53,13 @@ const WorkingSteps = () => (
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.12, ease: 'easeOut' }}
             whileHover={{ y: -4 }}
-            className="relative bg-white text-center rounded-2xl p-8 flex-1 shadow-lg"
+            className="relative bg-white text-center rounded-2xl p-5 sm:p-8 flex-1 shadow-lg"
           >
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-md shadow-primary/40">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-base sm:text-lg shadow-md shadow-primary/40">
               {step.number}
             </div>
-            <h3 className="text-lg font-semibold mt-6 mb-3 text-heroBg">{step.title}</h3>
-            <p className="text-gray-600 text-sm leading-relaxed">{step.description}</p>
+            <h3 className="text-base sm:text-lg font-semibold mt-4 sm:mt-6 mb-2 sm:mb-3 text-heroBg">{step.title}</h3>
+            <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">{step.description}</p>
           </motion.div>
         ))}
       </div>

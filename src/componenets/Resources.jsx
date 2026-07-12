@@ -51,14 +51,14 @@ const VideoCard = ({ video, onPlay }) => (
     viewport={{ once: true }}
     transition={{ duration: 0.45, ease: 'easeOut' }}
     whileHover={{ y: -4 }}
-    className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 p-6 flex flex-col items-center"
+    className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 p-4 sm:p-6 flex flex-col items-center"
   >
     {/* Thumbnail */}
-    <div className="w-full relative mb-6 rounded-xl overflow-hidden">
+    <div className="w-full relative mb-3 sm:mb-6 rounded-xl overflow-hidden">
       <img
         src={video.thumbnail}
         alt={video.title}
-        className="w-full h-48 object-cover"
+        className="w-full h-28 sm:h-48 object-cover"
         loading="lazy"
       />
       <button
@@ -66,16 +66,16 @@ const VideoCard = ({ video, onPlay }) => (
         aria-label={`Play: ${video.title}`}
         className="absolute inset-0 flex items-center justify-center group"
       >
-        <span className="bg-primary/90 group-hover:bg-primary group-hover:scale-110 transition-transform duration-200 p-4 rounded-full shadow-lg shadow-primary/40">
-          <IoPlay className="w-6 h-6 text-white translate-x-0.5" />
+        <span className="bg-primary/90 group-hover:bg-primary group-hover:scale-110 transition-transform duration-200 p-2.5 sm:p-4 rounded-full shadow-lg shadow-primary/40">
+          <IoPlay className="w-4 h-4 sm:w-6 sm:h-6 text-white translate-x-0.5" />
         </span>
       </button>
     </div>
 
-    <h3 className="text-lg font-title font-bold mb-3 text-center text-heroBg leading-snug">
+    <h3 className="text-sm sm:text-lg font-title font-bold mb-1.5 sm:mb-3 text-center text-heroBg leading-snug">
       {video.title}
     </h3>
-    <p className="text-sm text-gray-500 mb-6 text-center leading-relaxed flex-1">
+    <p className="hidden sm:block text-sm text-gray-500 mb-6 text-center leading-relaxed flex-1">
       {video.description}
     </p>
 
@@ -85,7 +85,7 @@ const VideoCard = ({ video, onPlay }) => (
       rel="noopener noreferrer"
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.97 }}
-      className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white py-2 px-5 font-medium rounded-xl text-sm transition-colors duration-150"
+      className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white py-1.5 sm:py-2 px-4 sm:px-5 font-medium rounded-xl text-xs sm:text-sm transition-colors duration-150"
     >
       Visit Channel
       <FaCircleArrowRight />
@@ -97,17 +97,17 @@ const Resources = () => {
   const [activeVideo, setActiveVideo] = useState('');
 
   return (
-    <section id="resources" className="bg-[#f7f8fc] py-20 px-4 sm:px-6 lg:px-8">
+    <section id="resources" className="bg-[#f7f8fc] py-10 sm:py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-6 sm:mb-12"
         >
-          <h2 className="text-4xl font-bold font-title text-heroBg mb-4">Wellness Resources</h2>
-          <p className="md:w-1/2 mx-auto text-gray-600 leading-relaxed">
+          <h2 className="text-2xl sm:text-4xl font-bold font-title text-heroBg mb-2 sm:mb-4">Wellness Resources</h2>
+          <p className="md:w-1/2 mx-auto text-gray-600 leading-relaxed text-xs sm:text-base">
             Carefully selected videos to support your mental health journey — from guided meditations
             to expert talks on focus, resilience, and emotional wellbeing.
           </p>

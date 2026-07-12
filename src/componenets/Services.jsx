@@ -58,12 +58,12 @@ const ServiceCard = ({ service }) => (
     <img
       src={service.image}
       alt={service.title}
-      className="w-full h-44 sm:h-56 object-cover flex-shrink-0"
+      className="w-full h-32 sm:h-56 object-cover flex-shrink-0"
       loading="lazy"
     />
-    <div className="p-5 sm:p-6 flex flex-col flex-1 font-secondary">
-      <h3 className="text-lg sm:text-xl font-semibold text-primary mb-2">{service.title}</h3>
-      <p className="text-gray-600 text-sm leading-relaxed mb-4 flex-1">{service.description}</p>
+    <div className="p-4 sm:p-6 flex flex-col flex-1 font-secondary">
+      <h3 className="text-base sm:text-xl font-semibold text-primary mb-1.5 sm:mb-2">{service.title}</h3>
+      <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 flex-1">{service.description}</p>
       <div>
         <h4 className="text-sm font-semibold text-gray-900 mb-2">Benefits</h4>
         <ul className="space-y-2">
@@ -124,19 +124,19 @@ const Services = () => {
   const [active, setActive] = useState(0);
 
   return (
-    <section id="services" className="bg-[#f7f8fc] py-20 px-4 sm:px-6 lg:px-8">
+    <section id="services" className="bg-[#f7f8fc] py-10 sm:py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-10"
+          className="text-center mb-6 sm:mb-10"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold font-title text-heroBg mb-4">
+          <h2 className="text-2xl sm:text-4xl font-bold font-title text-heroBg mb-2 sm:mb-4">
             What Can We Do Together
           </h2>
-          <p className="sm:w-4/5 md:w-1/2 mx-auto text-gray-600 leading-relaxed text-sm sm:text-base">
+          <p className="sm:w-4/5 md:w-1/2 mx-auto text-gray-600 leading-relaxed text-xs sm:text-base">
             Life brings challenges, but you don't have to face them alone. Together, we can work on
             strengthening relationships, improving communication, building resilience, and finding
             peace within.

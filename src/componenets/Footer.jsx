@@ -15,9 +15,9 @@ const scrollTo = (id) => {
 };
 
 const Footer = () => (
-  <footer className="bg-heroBg border-t border-white/10 py-12 px-4 sm:px-6 lg:px-8">
+  <footer className="bg-heroBg border-t border-white/10 py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
     <div className="max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-10">
+      <div className="flex flex-col md:flex-row justify-between items-start gap-5 sm:gap-8 mb-5 sm:mb-10">
         {/* Brand */}
         <div className="space-y-3 max-w-xs">
           <div className="flex items-center gap-2">

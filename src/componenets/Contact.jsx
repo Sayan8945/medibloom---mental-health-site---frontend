@@ -67,34 +67,34 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="bg-heroBg py-20 px-4 sm:px-6 lg:px-8">
+    <section id="contact" className="bg-heroBg py-10 sm:py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-12 text-white">
+        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-6 sm:gap-12 text-white">
           {/* Left */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="space-y-8"
+            className="space-y-4 sm:space-y-8"
           >
             <div>
-              <h2 className="text-4xl font-bold font-title mb-3">Make an Appointment</h2>
-              <p className="text-white/60 leading-relaxed">
+              <h2 className="text-2xl sm:text-4xl font-bold font-title mb-2 sm:mb-3">Make an Appointment</h2>
+              <p className="text-white/60 leading-relaxed text-sm sm:text-base">
                 Take the first step towards better mental health. Our team is here to support you
                 every step of the way.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6">
               {FEATURES.map(({ icon: Icon, title, desc }) => (
-                <div key={title} className="flex items-start gap-4">
-                  <div className="flex items-center justify-center rounded-xl bg-white/10 p-3 flex-shrink-0">
-                    <Icon className="text-primary w-4 h-4" />
+                <div key={title} className="flex items-start gap-2.5 sm:gap-4">
+                  <div className="flex items-center justify-center rounded-lg sm:rounded-xl bg-white/10 p-2 sm:p-3 flex-shrink-0">
+                    <Icon className="text-primary w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold mb-1">{title}</h3>
-                    <p className="text-white/60 text-xs leading-relaxed">{desc}</p>
+                    <h3 className="text-xs sm:text-sm font-semibold mb-0.5 sm:mb-1 leading-snug">{title}</h3>
+                    <p className="hidden sm:block text-white/60 text-xs leading-relaxed">{desc}</p>
                   </div>
                 </div>
               ))}
@@ -107,10 +107,10 @@ const Contact = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-white rounded-2xl p-6 sm:p-8 shadow-2xl shadow-black/30"
+            className="bg-white rounded-2xl p-5 sm:p-8 shadow-2xl shadow-black/30"
           >
-            <h3 className="text-2xl font-bold mb-6 text-heroBg">Book an Appointment</h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <h3 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6 text-heroBg">Book an Appointment</h3>
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               <div className="flex flex-col sm:flex-row gap-4">
                 <input
                   type="text"

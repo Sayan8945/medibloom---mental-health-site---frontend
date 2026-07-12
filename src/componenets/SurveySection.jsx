@@ -85,18 +85,18 @@ const BenefitCard = ({ benefit, index }) => {
       viewport={{ once: true }}
       transition={{ duration: 0.45, delay: index * 0.07, ease: 'easeOut' }}
       whileHover={{ y: -6, scale: 1.02 }}
-      className="group relative bg-white/80 backdrop-blur-sm border border-white/60 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden"
+      className="group relative bg-white/80 backdrop-blur-sm border border-white/60 rounded-xl sm:rounded-2xl p-3.5 sm:p-6 shadow-sm hover:shadow-lg transition-shadow duration-300 overflow-hidden"
     >
       {/* gradient bg on hover */}
       <div
         className={`absolute inset-0 bg-gradient-to-br ${benefit.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl`}
       />
       <div className="relative">
-        <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gray-50 group-hover:bg-white/80 transition-colors duration-300 shadow-sm">
-          <Icon className={`w-6 h-6 ${benefit.iconColor}`} />
+        <div className="mb-2.5 sm:mb-4 inline-flex items-center justify-center w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-gray-50 group-hover:bg-white/80 transition-colors duration-300 shadow-sm">
+          <Icon className={`w-4.5 h-4.5 sm:w-6 sm:h-6 ${benefit.iconColor}`} />
         </div>
-        <h3 className="text-base font-semibold text-heroBg mb-2 leading-snug">{benefit.title}</h3>
-        <p className="text-gray-500 text-sm leading-relaxed">{benefit.desc}</p>
+        <h3 className="text-xs sm:text-base font-semibold text-heroBg mb-1 sm:mb-2 leading-snug">{benefit.title}</h3>
+        <p className="hidden sm:block text-gray-500 text-sm leading-relaxed">{benefit.desc}</p>
       </div>
     </motion.div>
   );
@@ -122,7 +122,7 @@ const SurveySection = () => {
     <section
       ref={sectionRef}
       id="survey"
-      className="relative bg-heroBg overflow-hidden py-24 px-4 sm:px-6 lg:px-8"
+      className="relative bg-heroBg overflow-hidden py-10 sm:py-24 px-4 sm:px-6 lg:px-8"
     >
       {/* ── Ambient orbs ── */}
       <FloatingOrb className="w-96 h-96 bg-primary top-[-80px] left-[-80px]" delay={0} />
@@ -147,7 +147,7 @@ const SurveySection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55, ease: 'easeOut' }}
-          className="text-center mb-16"
+          className="text-center mb-8 sm:mb-16"
         >
           {/* Badge */}
           <motion.div
@@ -155,13 +155,13 @@ const SurveySection = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="inline-flex items-center gap-2 bg-primary/10 border border-primary/30 text-primary px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest mb-6"
+            className="inline-flex items-center gap-1.5 sm:gap-2 bg-primary/10 border border-primary/30 text-primary px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-widest mb-4 sm:mb-6"
           >
-            <MdAutoAwesome className="w-3.5 h-3.5" />
+            <MdAutoAwesome className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             AI-Powered Assessment
           </motion.div>
 
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-title font-bold text-white mb-6 leading-tight tracking-tight">
+          <h2 className="text-2xl sm:text-5xl lg:text-6xl font-title font-bold text-white mb-3 sm:mb-6 leading-tight tracking-tight">
             Take Your{' '}
             <span className="relative inline-block">
               <span className="text-primary">Mental Wellness</span>
@@ -186,15 +186,17 @@ const SurveySection = () => {
             Assessment
           </h2>
 
-          <p className="text-white/60 text-lg md:w-3/5 mx-auto leading-relaxed">
+          <p className="text-white/60 text-xs sm:text-lg md:w-3/5 mx-auto leading-relaxed">
             Answer a few confidential questions and receive a personalised mental wellness report
             powered by AI. Your responses help us provide tailored insights and improve future
             assessments.
           </p>
         </motion.div>
 
-        {/* ── Benefit cards grid ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16">
+        {/* ── Benefit cards grid — 2-col compact grid on mobile instead of a
+            tall single column, so 6 cards take roughly half the vertical
+            space they used to ── */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 mb-8 sm:mb-16">
           {BENEFITS.map((benefit, i) => (
             <BenefitCard key={benefit.title} benefit={benefit} index={i} />
           ))}
@@ -206,14 +208,14 @@ const SurveySection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-4 mb-10"
+          className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 mb-5 sm:mb-10"
         >
           {/* Primary CTA */}
           <motion.button
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
             onClick={() => navigate('/survey')}
-            className="group inline-flex items-center gap-3 bg-primary hover:bg-primary/90 text-white font-semibold px-8 py-4 rounded-2xl shadow-lg shadow-primary/30 transition-colors duration-200 text-base"
+            className="group inline-flex items-center justify-center gap-3 bg-primary hover:bg-primary/90 text-white font-semibold px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl shadow-lg shadow-primary/30 transition-colors duration-200 text-sm sm:text-base"
           >
             Start Assessment
             <motion.span
@@ -230,7 +232,7 @@ const SurveySection = () => {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             onClick={scrollToHow}
-            className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 backdrop-blur-sm border border-white/20 text-white font-medium px-8 py-4 rounded-2xl transition-colors duration-200 text-base"
+            className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 backdrop-blur-sm border border-white/20 text-white font-medium px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl transition-colors duration-200 text-sm sm:text-base"
           >
             Learn More
             <FaChevronDown className="w-3.5 h-3.5 opacity-70" />
@@ -243,7 +245,7 @@ const SurveySection = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex items-start sm:items-center justify-center gap-2 text-white/40 text-xs text-center max-w-lg mx-auto mb-20"
+          className="flex items-start sm:items-center justify-center gap-2 text-white/40 text-[11px] sm:text-xs text-center max-w-lg mx-auto mb-8 sm:mb-20"
         >
           <IoShieldCheckmark className="w-4 h-4 flex-shrink-0 text-primary/60 mt-0.5 sm:mt-0" />
           <span>
@@ -259,14 +261,14 @@ const SurveySection = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
-            className="text-center text-white/40 text-xs font-semibold uppercase tracking-widest mb-8"
+            className="text-center text-white/40 text-xs font-semibold uppercase tracking-widest mb-4 sm:mb-8"
           >
             How it works
           </motion.p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-0">
+          <div className="flex flex-row sm:flex-row items-start sm:items-center justify-center gap-0">
             {PROCESS_STEPS.map((step, i) => (
-              <div key={step.number} className="flex flex-col sm:flex-row items-center">
+              <div key={step.number} className="flex flex-row sm:flex-row items-center">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
@@ -275,8 +277,8 @@ const SurveySection = () => {
                   className="flex flex-col items-center group"
                 >
                   {/* Step circle */}
-                  <div className="relative w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-3 group-hover:border-primary/50 group-hover:bg-primary/10 transition-colors duration-200">
-                    <span className="text-primary font-title font-bold text-sm">{step.number}</span>
+                  <div className="relative w-9 h-9 sm:w-14 sm:h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-1.5 sm:mb-3 group-hover:border-primary/50 group-hover:bg-primary/10 transition-colors duration-200">
+                    <span className="text-primary font-title font-bold text-[10px] sm:text-sm">{step.number}</span>
                     {/* completed glow for step 1 */}
                     {i === 0 && (
                       <motion.div
@@ -286,29 +288,22 @@ const SurveySection = () => {
                       />
                     )}
                   </div>
-                  <span className="text-white/60 text-xs text-center font-medium max-w-[80px] leading-snug">
+                  <span className="text-white/60 text-[9px] sm:text-xs text-center font-medium max-w-[52px] sm:max-w-[80px] leading-snug">
                     {step.label}
                   </span>
                 </motion.div>
 
-                {/* Connector line — horizontal on sm+, vertical on mobile */}
+                {/* Connector line — horizontal at all breakpoints now that
+                    mobile also lays the steps out in a row to keep the
+                    strip short */}
                 {i < PROCESS_STEPS.length - 1 && (
-                  <>
-                    <motion.div
-                      initial={{ scaleX: 0, opacity: 0 }}
-                      whileInView={{ scaleX: 1, opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: i * 0.1 + 0.15 }}
-                      className="hidden sm:block w-16 lg:w-24 h-px bg-gradient-to-r from-white/20 to-white/5 mx-2 origin-left mb-8"
-                    />
-                    <motion.div
-                      initial={{ scaleY: 0, opacity: 0 }}
-                      whileInView={{ scaleY: 1, opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.3, delay: i * 0.1 + 0.15 }}
-                      className="sm:hidden w-px h-6 bg-gradient-to-b from-white/20 to-white/5 my-1 origin-top"
-                    />
-                  </>
+                  <motion.div
+                    initial={{ scaleX: 0, opacity: 0 }}
+                    whileInView={{ scaleX: 1, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: i * 0.1 + 0.15 }}
+                    className="w-4 sm:w-16 lg:w-24 h-px bg-gradient-to-r from-white/20 to-white/5 mx-1 sm:mx-2 origin-left mb-4 sm:mb-8"
+                  />
                 )}
               </div>
             ))}

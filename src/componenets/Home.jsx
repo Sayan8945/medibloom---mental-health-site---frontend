@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FaCircleArrowRight } from 'react-icons/fa6';
 import { MdAutoAwesome } from 'react-icons/md';
 import { Link } from 'react-router-dom';
@@ -26,6 +27,22 @@ const POEM_LINES = [
   { cap: 'T', rest: 'ogether we rise, strong from within.' },
 ];
 
+// Mobile-only: split the poem into exactly 2 chunks that swap back and
+// forth, so all 5 lines get shown across just 2 crossfades instead of
+// cycling through 3+. Container height is sized for the larger chunk
+// (3 lines) so neither chunk ever gets clipped.
+const POEM_CHUNK_COUNT = 2;
+const POEM_CHUNK_SIZE = Math.ceil(POEM_LINES.length / POEM_CHUNK_COUNT);
+const POEM_CHUNKS = Array.from(
+  { length: POEM_CHUNK_COUNT },
+  (_, i) => POEM_LINES.slice(i * POEM_CHUNK_SIZE, i * POEM_CHUNK_SIZE + POEM_CHUNK_SIZE)
+);
+const POEM_MAX_LINES = Math.max(...POEM_CHUNKS.map((c) => c.length));
+const POEM_LINE_H = 22;
+const POEM_GAP = 6;
+const POEM_BLOCK_H = POEM_MAX_LINES * POEM_LINE_H + (POEM_MAX_LINES - 1) * POEM_GAP;
+const POEM_CYCLE_MS = 3400;
+
 // ── Floating soft orbs in bg ───────────────────────────────────
 const Orb = ({ size, top, left, delay, color }) => (
   <motion.div
@@ -42,10 +59,10 @@ const StatPill = ({ value, label, delay }) => (
     variants={fadeUp(delay)}
     initial="hidden"
     animate="visible"
-    className="flex flex-col items-center bg-white/8 backdrop-blur-sm border border-white/10 rounded-2xl px-5 py-3"
+    className="flex flex-col items-center bg-white/8 backdrop-blur-sm border border-white/10 rounded-xl sm:rounded-2xl px-3 sm:px-5 py-2 sm:py-3"
   >
-    <span className="text-xl font-title font-bold text-primary leading-none">{value}</span>
-    <span className="text-white/50 text-xs mt-1 font-medium">{label}</span>
+    <span className="text-base sm:text-xl font-title font-bold text-primary leading-none">{value}</span>
+    <span className="text-white/50 text-[10px] sm:text-xs mt-1 font-medium">{label}</span>
   </motion.div>
 );
 
@@ -55,10 +72,20 @@ const StatPill = ({ value, label, delay }) => (
 // WellnessHub (see Layout.jsx), a sliding panel opened via its own
 // floating trigger, independent of the homepage hero.
 const Home = () => {
+  // Cycles the mobile poem block through POEM_CHUNKS so all 5 lines get
+  // shown over time without ever growing past a ~2-line block height.
+  const [poemChunk, setPoemChunk] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPoemChunk((prev) => (prev + 1) % POEM_CHUNKS.length);
+    }, POEM_CYCLE_MS);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
   <section
     id="home"
-    className="relative bg-heroBg text-white flex items-center pt-20 sm:pt-24 min-h-screen overflow-hidden"
+    className="relative bg-heroBg text-white flex items-center pt-16 sm:pt-24 min-h-0 sm:min-h-screen overflow-hidden"
   >
     {/* Ambient background orbs */}
     <Orb size={280} top="-40px"  left="-60px"  delay={0}   color="bg-primary" />
@@ -75,17 +102,17 @@ const Home = () => {
       }}
     />
 
-    <div className="relative max-w-[90rem] mx-auto w-full flex flex-col md:flex-row items-center justify-between px-4 sm:px-8 lg:px-12 py-10 md:py-14 gap-10 md:gap-10">
+    <div className="relative max-w-[90rem] mx-auto w-full flex flex-col md:flex-row items-center justify-between px-4 sm:px-8 lg:px-12 py-6 md:py-14 gap-5 md:gap-10">
 
       {/* ── LEFT COLUMN ── */}
-      <div className="w-full md:w-1/2 flex flex-col items-center md:items-start gap-5 md:gap-7">
+      <div className="w-full md:w-1/2 flex flex-col items-center md:items-start gap-3 md:gap-7">
 
         {/* Badge */}
         <motion.div
           variants={fadeUp(0)}
           initial="hidden"
           animate="visible"
-          className="inline-flex items-center gap-2 bg-primary/15 border border-primary/30 text-primary px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-semibold tracking-widest uppercase"
+          className="inline-flex items-center gap-1.5 bg-primary/15 border border-primary/30 text-primary px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[9px] sm:text-xs font-semibold tracking-widest uppercase"
         >
           <MdAutoAwesome className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
           AI-Powered Mental Wellness
@@ -97,7 +124,7 @@ const Home = () => {
             variants={fadeUp(0.1)}
             initial="hidden"
             animate="visible"
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.6rem] font-title font-bold leading-[1.1] tracking-tight"
+            className="text-2xl sm:text-4xl md:text-5xl lg:text-[3.6rem] font-title font-bold leading-[1.15] sm:leading-[1.1] tracking-tight"
           >
             Start Your Journey
             <br />
@@ -128,20 +155,70 @@ const Home = () => {
           </motion.h1>
         </div>
 
-        {/* ── Poem block ── */}
+        {/* ── Poem block — mobile shows a centered, 2-swap crossfade of
+            the poem; sm+ keeps the original one-line-per-stanza,
+            left-aligned treatment intact. ── */}
         <motion.div
           variants={fadeUp(0.35)}
           initial="hidden"
           animate="visible"
-          className="relative w-full max-w-md"
+          className="relative w-full max-w-md mx-auto sm:mx-0"
         >
+          {/* Accent bar — left rail on sm+ only; the mobile version is
+              centered so a left rail wouldn't read correctly there */}
           <motion.div
-            className="absolute left-0 top-0 bottom-0 w-0.5 rounded-full bg-gradient-to-b from-primary via-primary/50 to-transparent"
+            className="hidden sm:block absolute left-0 top-0 bottom-0 w-0.5 rounded-full bg-gradient-to-b from-primary via-primary/50 to-transparent"
             initial={{ scaleY: 0, originY: 0 }}
             animate={{ scaleY: 1 }}
             transition={{ duration: 0.7, delay: 0.5, ease: 'easeOut' }}
           />
-          <div className="pl-4 sm:pl-5 space-y-0.5 sm:space-y-1">
+
+          {/* Mobile: centered, exactly 2 chunks crossfading back and
+              forth. Container height is a fixed px value sized for the
+              larger chunk so text is never clipped on either swap. */}
+          <div className="sm:hidden flex flex-col items-center text-center">
+            <div
+              className="flex flex-col justify-center items-center gap-1.5"
+              style={{ height: POEM_BLOCK_H }}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={poemChunk}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.5, ease: 'easeInOut' }}
+                  className="flex flex-col items-center gap-1.5"
+                >
+                  {POEM_CHUNKS[poemChunk].map(({ cap, rest }, i) => (
+                    <p
+                      key={i}
+                      className="flex items-center justify-center font-secondary italic text-[13px] leading-none text-white/75 whitespace-nowrap"
+                      style={{ height: POEM_LINE_H }}
+                    >
+                      <span className="text-white font-bold not-italic mr-0.5">{cap}</span>
+                      {rest}
+                    </p>
+                  ))}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Progress dots — show which of the 2 chunks is active */}
+            <div className="flex gap-1 mt-2" aria-hidden="true">
+              {POEM_CHUNKS.map((_, i) => (
+                <span
+                  key={i}
+                  className={`h-1 rounded-full transition-all duration-300 ${
+                    i === poemChunk ? 'w-4 bg-primary' : 'w-1 bg-white/20'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* sm+: original per-line stanza layout */}
+          <div className="hidden sm:block pl-4 sm:pl-5">
             <motion.span
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 0.25, scale: 1 }}
@@ -150,18 +227,20 @@ const Home = () => {
             >
               "
             </motion.span>
-            {POEM_LINES.map(({ cap, rest }, i) => (
-              <motion.p
-                key={i}
-                variants={slideLeft(0.6 + i * 0.1)}
-                initial="hidden"
-                animate="visible"
-                className="font-secondary italic text-xs sm:text-sm md:text-base leading-relaxed text-white/75"
-              >
-                <span className="text-xl sm:text-2xl md:text-3xl text-white font-bold not-italic">{cap}</span>
-                {rest}
-              </motion.p>
-            ))}
+            <div className="space-y-0.5 sm:space-y-1">
+              {POEM_LINES.map(({ cap, rest }, i) => (
+                <motion.p
+                  key={i}
+                  variants={slideLeft(0.6 + i * 0.1)}
+                  initial="hidden"
+                  animate="visible"
+                  className="font-secondary italic text-sm md:text-base leading-relaxed text-white/75"
+                >
+                  <span className="text-2xl md:text-3xl text-white font-bold not-italic">{cap}</span>
+                  {rest}
+                </motion.p>
+              ))}
+            </div>
           </div>
         </motion.div>
 
@@ -177,12 +256,12 @@ const Home = () => {
           variants={fadeUp(1.2)}
           initial="hidden"
           animate="visible"
-          className="flex flex-col xs:flex-row gap-3 items-stretch xs:items-center md:items-start w-full xs:w-auto"
+          className="flex flex-col xs:flex-row gap-2.5 sm:gap-3 items-stretch xs:items-center md:items-start w-full xs:w-auto"
         >
           <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="w-full xs:w-auto">
             <Link
               to="/survey"
-              className="flex items-center justify-center gap-2.5 bg-primary hover:bg-primary/90 text-white py-3.5 px-6 sm:px-8 font-semibold rounded-2xl transition-colors duration-200 shadow-xl shadow-primary/30 text-sm w-full xs:w-auto"
+              className="flex items-center justify-center gap-2.5 bg-primary hover:bg-primary/90 text-white py-2.5 sm:py-3.5 px-6 sm:px-8 font-semibold rounded-xl sm:rounded-2xl transition-colors duration-200 shadow-xl shadow-primary/30 text-sm w-full xs:w-auto"
             >
               Take Assessment
               <motion.span
@@ -197,7 +276,7 @@ const Home = () => {
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full xs:w-auto">
             <Link
               to="/login"
-              className="flex items-center justify-center gap-2 bg-white/8 hover:bg-white/14 border border-white/20 text-white/80 hover:text-white py-3.5 px-5 sm:px-6 font-medium rounded-2xl transition-all duration-200 text-sm backdrop-blur-sm w-full xs:w-auto"
+              className="flex items-center justify-center gap-2 bg-white/8 hover:bg-white/14 border border-white/20 text-white/80 hover:text-white py-2.5 sm:py-3.5 px-5 sm:px-6 font-medium rounded-xl sm:rounded-2xl transition-all duration-200 text-sm backdrop-blur-sm w-full xs:w-auto"
             >
               Make Appointment
             </Link>
