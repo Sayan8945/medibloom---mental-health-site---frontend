@@ -17,14 +17,46 @@ body {
 }
 
 /* ── Scrollbar ─────────────────────────────────── */
+/* Global page scrollbar — dark-themed to match the app's heroBg instead
+   of the browser's default light scrollbar, with a soft green thumb that
+   brightens on hover. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #06a055 rgba(255, 255, 255, 0.04);
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #06a055, #048a48);
+  border-radius: 99px;
+  border: 2px solid #0e1122;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #08c265, #06a055);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Compact variant — used inside panels/modals/chat bodies where a thick
+   scrollbar would feel out of place (WellnessHub, ChatAi, etc). */
 .scroll-thin {
   scrollbar-width: thin;
   scrollbar-color: #06a055 transparent;
 }
-.scroll-thin::-webkit-scrollbar { width: 4px; }
+.scroll-thin::-webkit-scrollbar { width: 5px; height: 5px; }
 .scroll-thin::-webkit-scrollbar-thumb {
-  background-color: #06a055;
+  background: #06a055;
   border-radius: 99px;
+  border: none;
+}
+.scroll-thin::-webkit-scrollbar-thumb:hover {
+  background: #08c265;
 }
 .scroll-thin::-webkit-scrollbar-track { background: transparent; }
 
