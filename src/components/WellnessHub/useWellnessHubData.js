@@ -36,7 +36,6 @@ export function useWellnessHubData() {
 
   const [checkInOpen, setCheckInOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const [reminderOpen, setReminderOpen] = useState(false);
 
   // ── Offline detection ──────────────────────────────────────────
@@ -156,7 +155,6 @@ export function useWellnessHubData() {
 
   const handleLinkAction = (action) => {
     if (action === 'profile') setProfileOpen(true);
-    else if (action === 'settings') setSettingsOpen(true);
     else if (action === 'contact') scrollToContact();
   };
 
@@ -207,7 +205,6 @@ export function useWellnessHubData() {
 
     checkInOpen, setCheckInOpen,
     profileOpen, setProfileOpen,
-    settingsOpen, setSettingsOpen,
 
     onOpenCheckIn: () => setCheckInOpen(true),
     onOpenProfile: () => setProfileOpen(true),

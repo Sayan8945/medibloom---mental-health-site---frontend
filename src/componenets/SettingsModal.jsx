@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { IoClose, IoSunny, IoMoon } from 'react-icons/io5';
 import { MdAutoAwesome } from 'react-icons/md';
-import { useAuth } from '../../contexts/AuthContext';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 /**
  * Settings quick link destination — surfaces the two preferences that
