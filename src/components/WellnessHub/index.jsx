@@ -5,6 +5,7 @@ import HubTrigger from './HubTrigger';
 import HubPanel from './HubPanel';
 import HubSheet from './HubSheet';
 import MoodReminderModal from './MoodReminderModal';
+import { getMoodMeta } from '../../mood/moodConstants';
 import { WellnessHubProvider, useWellnessHub } from './WellnessHubContext';
 
 /**
@@ -19,6 +20,7 @@ import { WellnessHubProvider, useWellnessHub } from './WellnessHubContext';
  */
 const WellnessHubContent = () => {
   const hub = useWellnessHub();
+  const moodMeta = hub.entry ? getMoodMeta(hub.entry.mood) : null;
 
   return (
     <>
@@ -26,6 +28,10 @@ const WellnessHubContent = () => {
         isOpen={hub.isOpen}
         onClick={hub.toggle}
         hasUnseenReminder={hub.reminderOpen}
+        showStats={!!hub.user && !hub.loading}
+        wellnessScore={hub.wellnessScores?.wellness ?? null}
+        streak={hub.analytics?.streaks?.current ?? 0}
+        moodEmoji={moodMeta?.emoji ?? null}
       />
 
       <HubPanel {...hub} />

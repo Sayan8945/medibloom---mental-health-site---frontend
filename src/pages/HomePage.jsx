@@ -8,7 +8,6 @@ import SurveySection from '../componenets/SurveySection';
 import Quotes from '../componenets/Quotes';
 import Contact from '../componenets/Contact';
 import Footer from '../componenets/Footer';
-import ScrollToTop from '../componenets/ScrollToTop';
 
 const HomePage = () => {
   const location = useLocation();
@@ -37,7 +36,6 @@ const HomePage = () => {
       <Quotes />
       <Contact />
       <Footer />
-      <ScrollToTop />
     </div>
   );
 };
