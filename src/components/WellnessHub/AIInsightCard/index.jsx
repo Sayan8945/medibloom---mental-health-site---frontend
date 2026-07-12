@@ -13,9 +13,12 @@ const ICONS = {
   alert:           MdWarningAmber,
 };
 
+// Soft, calming tones only — no harsh reds/bright yellows, per the hub's
+// "reduce visual fatigue" design requirement. "warning" uses a muted gold
+// rather than a saturated alert color.
 const STYLES = {
-  positive: { bg: 'from-emerald-500/15 to-teal-500/5', border: 'border-emerald-500/25', icon: 'text-emerald-400', iconBg: 'bg-emerald-500/15' },
-  warning:  { bg: 'from-amber-500/15 to-orange-500/5', border: 'border-amber-500/25',   icon: 'text-amber-400',   iconBg: 'bg-amber-500/15' },
+  positive: { bg: 'from-emerald-500/15 to-teal-500/5', border: 'border-emerald-500/25', icon: 'text-emerald-300', iconBg: 'bg-emerald-500/15' },
+  warning:  { bg: 'from-amber-400/10 to-amber-500/5',  border: 'border-amber-400/20',   icon: 'text-amber-300',   iconBg: 'bg-amber-400/10' },
 };
 
 /**
