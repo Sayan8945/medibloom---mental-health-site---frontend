@@ -6,57 +6,9 @@ import api from '../utils/api';
 import { MdHistory } from 'react-icons/md';
 import { IoArrowBack, IoShieldCheckmark, IoChevronDown, IoChevronUp, IoSparkles } from 'react-icons/io5';
 import { FaArrowRight } from 'react-icons/fa';
-
-// ── Scoring (same logic as StepResults) ───────────────────────
-const avg = (vals) => {
-  const clean = vals.filter((v) => v !== null && v !== undefined && !isNaN(v));
-  return clean.length ? clean.reduce((a, b) => a + b, 0) / clean.length : null;
-};
-const invert = (score, max = 4) => (score === null || score === undefined ? null : max - score);
-const toPercent = (score, max = 4) =>
-  score === null || score === undefined ? 50 : Math.round((score / max) * 100);
-
-const computeScores = (r) => {
-  const em = r.emotional || {};
-  const a  = r.anxiety   || {};
-  const d  = r.depression|| {};
-  const so = r.social    || {};
-  const l  = r.lifestyle || {};
-  const s  = r.stress    || {};
-
-  const emotionalRaw  = avg([em.happiness, em.motivation, em.hopefulness, em.emotionalStability,
-    invert(em.loneliness), invert(em.irritability), invert(em.moodChanges)]);
-  const anxietyRaw    = avg([a.nervousWithoutReason, a.excessiveWorry, a.difficultyRelaxing,
-    a.racingThoughts, a.avoidanceBehavior, a.frequentTension]);
-  const depressionRaw = avg([d.lostInterest, d.fatigue, d.concentrationIssues,
-    d.feelHopeless, d.feelWorthless, d.difficultyGettingUp, d.emotionallyNumb]);
-  const socialRaw     = avg([so.familySupport, so.friendSupport, so.socialInteraction,
-    so.expressEmotions, so.senseOfBelonging, so.communityInvolvement]);
-  const stressRaw     = avg([s.workStressLevel, s.deadlineStruggle, s.feelOverwhelmed,
-    invert(s.enjoyWork), s.experienceBurnout]);
-  const lifestyleScore = l.sleepQuality && l.waterIntake
-    ? ((l.sleepQuality / 5) * 0.4 + (Math.min(l.waterIntake, 10) / 10) * 0.3 +
-       (l.outdoorActivity / 7) * 0.3) * 100
-    : 50;
-
-  const emotional  = toPercent(emotionalRaw);
-  const anxiety    = toPercent(invert(anxietyRaw));
-  const depression = toPercent(invert(depressionRaw));
-  const social     = toPercent(socialRaw);
-  const stress     = toPercent(invert(stressRaw));
-  const lifestyle  = Math.round(lifestyleScore);
-  const overall    = Math.round((emotional + anxiety + depression + social + stress + lifestyle) / 6);
-
-  return { emotional, anxiety, depression, social, stress, lifestyle, overall };
-};
+import { computeScores, scoreColor } from '../utils/wellnessScoring';
 
 // ── Helpers ────────────────────────────────────────────────────
-const scoreColor = (pct) => {
-  if (pct >= 70) return { bar: 'bg-emerald-500', badge: 'bg-emerald-50 text-emerald-700', label: 'Good' };
-  if (pct >= 45) return { bar: 'bg-amber-400',   badge: 'bg-amber-50 text-amber-700',     label: 'Fair' };
-  return            { bar: 'bg-rose-500',         badge: 'bg-rose-50 text-rose-700',       label: 'Low' };
-};
-
 const ringColor = (pct) => {
   if (pct >= 70) return '#10b981';
   if (pct >= 45) return '#f59e0b';

@@ -31,7 +31,7 @@ frontend/
 │   └── logo.png
 ├── src/
 │   ├── assets/
-│   ├── componenets/
+│   ├── components/
 │   │   ├── Navbar.jsx
 │   │   ├── Home.jsx
 │   │   ├── Services.jsx

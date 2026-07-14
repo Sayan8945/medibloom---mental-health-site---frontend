@@ -10,8 +10,8 @@ import SurveyHistoryPage from './pages/SurveyHistoryPage';
 import AnalyticsPage     from './pages/AnalyticsPage';
 import RecommendationsPage from './pages/RecommendationsPage';
 import MoodPage          from './pages/MoodPage';
-import Layout            from './componenets/Layout';
-import ProtectedRoute    from './componenets/ProtectedRoute';
+import Layout            from './components/Layout';
+import ProtectedRoute    from './components/ProtectedRoute';
 
 function App() {
   return (

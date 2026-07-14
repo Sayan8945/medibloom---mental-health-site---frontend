@@ -1,6 +1,6 @@
 import MoodCheckInModal from '../../mood/MoodCheckInModal';
 import ProfileInfoModal from './ProfileInfoModal';
-import SettingsModal from '../../componenets/SettingsModal';
+import SettingsModal from '../SettingsModal';
 import HubTrigger from './HubTrigger';
 import HubPanel from './HubPanel';
 import HubSheet from './HubSheet';

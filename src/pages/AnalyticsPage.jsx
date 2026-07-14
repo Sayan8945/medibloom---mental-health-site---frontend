@@ -6,7 +6,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from '../components/ThemeToggle';
 import api from '../utils/api';
 import { IoArrowBack, IoShieldCheckmark } from 'react-icons/io5';
-import { MdInsights, MdAutoAwesome } from 'react-icons/md';
+import { MdInsights, MdAutoAwesome, MdCalendarMonth, MdClose } from 'react-icons/md';
 import { FaArrowRight } from 'react-icons/fa';
 
 import SummaryStats   from '../analytics/SummaryStats';
@@ -21,6 +21,7 @@ const RANGES = [
   { id: '30d', label: '30 Days' },
   { id: '90d', label: '90 Days' },
   { id: '1y',  label: '1 Year' },
+  { id: 'custom', label: 'Custom' },
 ];
 
 // ── Skeleton loader ─────────────────────────────────────────
@@ -75,6 +76,9 @@ const AnalyticsPage = () => {
   const { isDark } = useTheme();
 
   const [range, setRange]       = useState('all');
+  const [customFrom, setCustomFrom] = useState('');
+  const [customTo, setCustomTo]     = useState('');
+  const [showCustomPicker, setShowCustomPicker] = useState(false);
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState('');
   const [summary, setSummary]   = useState(null);
@@ -109,10 +113,30 @@ const AnalyticsPage = () => {
 
   // Reload trends when range changes (summary/comparison are range-independent)
   const handleRangeChange = async (newRange) => {
+    if (newRange === 'custom') {
+      // Wait for the user to pick dates and confirm before fetching
+      setRange('custom');
+      setShowCustomPicker(true);
+      return;
+    }
+    setShowCustomPicker(false);
     setRange(newRange);
     try {
       const trendsRes = await api.get(`/analytics/trends?range=${newRange}`);
       setTrends(trendsRes.data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleApplyCustomRange = async () => {
+    if (!customFrom) return;
+    try {
+      const params = new URLSearchParams({ range: 'custom', from: customFrom });
+      if (customTo) params.append('to', customTo);
+      const trendsRes = await api.get(`/analytics/trends?${params.toString()}`);
+      setTrends(trendsRes.data);
+      setShowCustomPicker(false);
     } catch (err) {
       setError(err.message);
     }
@@ -208,6 +232,52 @@ const AnalyticsPage = () => {
                   ))}
                 </div>
               </div>
+
+              {showCustomPicker && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                  className="flex flex-wrap items-end gap-3 bg-white dark:bg-darkCard rounded-xl border border-gray-100 dark:border-white/10 p-4 shadow-sm"
+                >
+                  <div className="flex items-center gap-2 text-gray-400 dark:text-gray-500 text-xs font-medium mb-2 sm:mb-0">
+                    <MdCalendarMonth className="w-4 h-4" />
+                    Custom range
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-xs text-gray-500 dark:text-gray-400">From</label>
+                    <input
+                      type="date"
+                      value={customFrom}
+                      onChange={(e) => setCustomFrom(e.target.value)}
+                      className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-darkBg text-heroBg dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-xs text-gray-500 dark:text-gray-400">To (optional)</label>
+                    <input
+                      type="date"
+                      value={customTo}
+                      onChange={(e) => setCustomTo(e.target.value)}
+                      className="text-sm px-3 py-1.5 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-darkBg text-heroBg dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    />
+                  </div>
+                  <button
+                    onClick={handleApplyCustomRange}
+                    disabled={!customFrom}
+                    className="text-xs font-semibold px-4 py-2 rounded-lg bg-primary text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
+                  >
+                    Apply
+                  </button>
+                  <button
+                    onClick={() => { setShowCustomPicker(false); handleRangeChange('all'); }}
+                    className="text-xs font-medium px-3 py-2 rounded-lg text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 flex items-center gap-1"
+                  >
+                    <MdClose className="w-3.5 h-3.5" /> Cancel
+                  </button>
+                </motion.div>
+              )}
 
               <TrendCharts
                 series={trends?.series}

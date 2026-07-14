@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import ChatAi from './ChatAi';
-import WellnessHub from '../components/WellnessHub';
+import WellnessHub from './WellnessHub';
 
 // WellnessHub + ChatAi are mounted globally here (not per-page) so the
 // floating trigger, sliding panel, and AI assistant are available on

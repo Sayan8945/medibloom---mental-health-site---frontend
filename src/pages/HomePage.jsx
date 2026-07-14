@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Home from '../componenets/Home';
-import Services from '../componenets/Services';
-import Resources from '../componenets/Resources';
-import WorkingSteps from '../componenets/WorkingSteps';
-import SurveySection from '../componenets/SurveySection';
-import Quotes from '../componenets/Quotes';
-import Contact from '../componenets/Contact';
-import Footer from '../componenets/Footer';
+import Home from '../components/Home';
+import Services from '../components/Services';
+import Resources from '../components/Resources';
+import WorkingSteps from '../components/WorkingSteps';
+import SurveySection from '../components/SurveySection';
+import Quotes from '../components/Quotes';
+import Contact from '../components/Contact';
+import Footer from '../components/Footer';
 
 const HomePage = () => {
   const location = useLocation();
