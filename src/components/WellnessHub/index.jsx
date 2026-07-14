@@ -1,6 +1,7 @@
 import MoodCheckInModal from '../../mood/MoodCheckInModal';
 import ProfileInfoModal from './ProfileInfoModal';
 import SettingsModal from '../SettingsModal';
+import LogoutConfirmModal from '../LogoutConfirmModal';
 import HubTrigger from './HubTrigger';
 import HubPanel from './HubPanel';
 import HubSheet from './HubSheet';
@@ -62,6 +63,12 @@ const WellnessHubContent = () => {
             isOpen={hub.reminderOpen}
             onCheckIn={hub.startCheckInFromReminder}
             onRemindLater={hub.dismissReminder}
+          />
+
+          <LogoutConfirmModal
+            isOpen={hub.logoutConfirmOpen}
+            onConfirm={hub.onConfirmLogout}
+            onCancel={() => hub.setLogoutConfirmOpen(false)}
           />
         </>
       )}

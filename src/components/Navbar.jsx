@@ -6,6 +6,7 @@ import { FaGoogle } from 'react-icons/fa';
 import { IoLogOutOutline } from 'react-icons/io5';
 import { useAuth } from '../contexts/AuthContext';
 import LoginModal from './LoginModal';
+import LogoutConfirmModal from './LogoutConfirmModal';
 import toast from 'react-hot-toast';
 import './Navbar.css';
 
@@ -28,6 +29,7 @@ const Navbar = () => {
   const [scrolled,     setScrolled]     = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLogin,    setShowLogin]    = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const dropdownRef = useRef(null);
 
   // Close dropdown when clicking outside
@@ -84,8 +86,14 @@ const Navbar = () => {
     }
   };
 
-  const handleLogout = async () => {
+  const requestLogout = () => {
     setShowDropdown(false);
+    setIsOpen(false);
+    setShowLogoutConfirm(true);
+  };
+
+  const handleLogout = async () => {
+    setShowLogoutConfirm(false);
     await logout();
     toast.success('You have been logged out successfully.', {
       icon: '👋',
@@ -195,7 +203,7 @@ const Navbar = () => {
                           live in the wellness sidebar's Quick Links section */}
                       <div className="py-2">
                         <button
-                          onClick={handleLogout}
+                          onClick={requestLogout}
                           className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors text-left"
                         >
                           <IoLogOutOutline className="w-4 h-4 flex-shrink-0" />
@@ -302,7 +310,7 @@ const Navbar = () => {
                           links now live in the wellness sidebar / mobile
                           profile drawer's Quick Links section */}
                       <button
-                        onClick={handleLogout}
+                        onClick={requestLogout}
                         className="flex items-center gap-3 px-4 py-3 text-sm text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors rounded-lg mx-1"
                       >
                         <IoLogOutOutline className="w-4 h-4 flex-shrink-0" />
@@ -341,6 +349,13 @@ const Navbar = () => {
 
       {/* Login Modal — rendered outside header to avoid stacking context issues */}
       <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
+
+      {/* Logout confirmation — prevents accidental sign-out from a stray click */}
+      <LogoutConfirmModal
+        isOpen={showLogoutConfirm}
+        onConfirm={handleLogout}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
     </>
   );
 };

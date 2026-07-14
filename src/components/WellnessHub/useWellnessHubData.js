@@ -38,6 +38,7 @@ export function useWellnessHubData() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [reminderOpen, setReminderOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
   // ── Offline detection ──────────────────────────────────────────
   useEffect(() => {
@@ -175,7 +176,10 @@ export function useWellnessHubData() {
     else if (action === 'appointment') scrollToContact();
   };
 
+  const requestLogout = () => setLogoutConfirmOpen(true);
+
   const handleLogout = async () => {
+    setLogoutConfirmOpen(false);
     setIsOpen(false);
     await logout();
     toast.success('You have been logged out successfully.', {
@@ -208,13 +212,15 @@ export function useWellnessHubData() {
     checkInOpen, setCheckInOpen,
     profileOpen, setProfileOpen,
     settingsOpen, setSettingsOpen,
+    logoutConfirmOpen, setLogoutConfirmOpen,
 
     onOpenCheckIn: () => setCheckInOpen(true),
     onOpenProfile: () => setProfileOpen(true),
     onNavigate: handleNavigate,
     onLinkAction: handleLinkAction,
     onQuickAction: handleQuickAction,
-    onLogout: handleLogout,
+    onLogout: requestLogout,
+    onConfirmLogout: handleLogout,
     onCheckInSubmit: handleCheckInSubmit,
     onRetry: loadData,
     loginWithGoogle,
